@@ -9,21 +9,24 @@
                 >
             </b-navbar-item>
         </template>
-        <template #start>
+        <template #start >
             <b-navbar-item href="#">
                 Home
             </b-navbar-item>
             <b-navbar-item href="#">
                 Documentation
             </b-navbar-item>
-            <b-navbar-dropdown label="Info">
-                <b-navbar-item href="#">
-                    About
+
+            <b-navbar-dropdown :label="item.name" v-for="item in value" :key="item.name">
+                
+                <b-navbar-item href="#" v-for="i in item.children" :key="i.name">
+                    {{ i.name }}
                 </b-navbar-item>
                 <b-navbar-item href="#">
                     Contact
                 </b-navbar-item>
             </b-navbar-dropdown>
+
         </template>
 
         <template #end>

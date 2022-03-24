@@ -15,6 +15,11 @@ demo = [
           "path": "/vue",
           "children": [],
         },
+        {
+          "name": "react页面",
+          "path": "/react",
+          "children": [],
+        },
       ],
     },
     {
