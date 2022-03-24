@@ -541,12 +541,6 @@ export default {
           openSidebar: this.openSidebar
         });
       } else {
-        this.addLayer({
-          type: "itk-vtk",
-          name: "example image",
-          data: "https://images.proteinatlas.org/19661/221_G2_1_red_green.jpg"
-        });
-
         await this.addLayer({
           type: "vector",
           name: "shape vectors",
