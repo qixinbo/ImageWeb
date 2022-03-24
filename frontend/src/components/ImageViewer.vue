@@ -747,8 +747,9 @@ svg {
   height: 100% !important;
 }
 .floating-close-btn {
-  position: absolute !important;
-  left: 260px;
+  /*position: absolute !important;*/
+  position: relative !important;
+  right: -40px;
   top: 10px;
 }
 .floating-menu-btn {
@@ -756,11 +757,12 @@ svg {
   background-color: #ffffff00 !important;
   border-color: #dbdbdb00 !important;
   z-index: 9999;
-  position: absolute !important;
+  /*position: absolute !important;*/
+  position: relative !important;
   width: 34px;
   height: 34px;
-  top: 5px;
-  left: 5px;
+  /*top: 5px;*/
+  /*left: 50px;*/
 }
 .floating-menu-btn > img {
   height: 30px;
