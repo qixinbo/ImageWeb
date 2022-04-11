@@ -9,9 +9,13 @@ import { extend, ValidationProvider } from "vee-validate";
 import * as rules from "vee-validate/dist/rules";
 import { messages } from "vee-validate/dist/locale/en.json";
 
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+
 import { store } from "./store";
 
 Vue.use(Buefy);
+Vue.use(ElementUI);
 
 Vue.config.productionTip = false;
 

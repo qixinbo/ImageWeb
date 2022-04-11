@@ -20,18 +20,6 @@
         type="is-light"
       >
         <div class="p-1">
-          <div class="block">
-            <img
-              :style="{ width: mode === 'full' ? '220px' : '120px' }"
-              src="static/img/kaibu-banner.svg"
-            />
-            <button
-              class="button floating-close-btn is-small"
-              @click="openSidebar(false)"
-            >
-              <b-icon icon="chevron-left"></b-icon>
-            </button>
-          </div>
 
           <div class="block" v-if="mode === 'full'">
             <div class="field">
@@ -97,6 +85,14 @@
                   }}</b-dropdown-item
                 >
               </b-dropdown>
+
+              <button
+                class="button floating-close-btn is-small"
+                @click="openSidebar(false)"
+              >
+                <b-icon icon="chevron-left"></b-icon>
+              </button>
+
             </div>
           </div>
           <b-tabs
@@ -749,8 +745,8 @@ svg {
 .floating-close-btn {
   /*position: absolute !important;*/
   position: relative !important;
-  right: -40px;
-  top: 10px;
+  right: -20px;
+  top: 0px;
 }
 .floating-menu-btn {
   margin-left: 3px;
