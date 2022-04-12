@@ -245,10 +245,13 @@ import { setupImJoyAPI } from "../imjoyAPI";
 
 const components = {};
 const layerTypes = {};
+
 for (let c in layerComponents) {
   components[layerComponents[c].name] = layerComponents[c];
   layerTypes[layerComponents[c].type] = layerComponents[c];
 }
+
+console.log('components = ', components)
 
 const widgetTypes = {};
 for (let c in widgetComponents) {
