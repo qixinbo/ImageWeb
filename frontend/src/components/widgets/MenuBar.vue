@@ -56,7 +56,6 @@ export default {
     }
   },
   mounted(){
-    console.log("----", this.menu.Edit instanceof Object)
     // axios
     //   .get('http://localhost:5000/')
     //   .then(response => (this.value = response.data))

@@ -3,6 +3,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = {
   publicPath: '/',
+  lintOnSave: false,
   pwa: {
     workboxPluginMode: 'GenerateSW',
       workboxOptions: {

@@ -18,7 +18,9 @@ export const store = new Vuex.Store({
     },
     addLayer(context, config) {
       context.commit("addLayer", config);
+      console.log('config.init 111', config.init)
       Vue.nextTick(() => {
+        console.log('config.init 222', config.init)
         if (config.init) {
           config
             .init()
@@ -30,6 +32,7 @@ export const store = new Vuex.Store({
                   );
                 }
               }
+              console.log('layer = ', layer)
               layer.config = config;
               layer.setVisible(config.visible);
               layer.getLayerAPI = layer.getLayerAPI || function() {};
