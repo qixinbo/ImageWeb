@@ -24,6 +24,8 @@
     </el-submenu>
   </el-menu>
  -->  
+
+<!--  对应data_v1
  <el-menu class="el-menu-demo" mode="horizontal" @select="handleSelect">
     <el-submenu v-for='m1 in value2[1]' :index="m1[0]" :key='m1[0]'>
       <template slot="title">{{m1[0]}}</template>
@@ -44,7 +46,32 @@
         </el-submenu>      
       </div>
     </el-submenu>
+  </el-menu> -->
+
+  <h1> {{value2["menu"]}}</h1>
+
+ <el-menu class="el-menu-demo" mode="horizontal" @select="handleSelect">
+    <el-submenu v-for='(m1, n1) in value2["menu"]' :index="n1" :key='n1'>
+      <template slot="title">{{n1}}</template>
+      <div v-for='(m2, n2) in m1' :key='n2'>
+        <el-menu-item v-if='m2.hasOwnProperty("name")' :index="n2" :key='n2'>
+          {{n2}}
+        </el-menu-item>
+        <el-submenu v-else :index="n2">
+          <template slot="title">{{n2}}</template>
+            <div v-for='(m3, n3) in m2' :key='n3'>
+              <el-menu-item v-if='m3.hasOwnProperty("name")' :index="n3" :key='n3'>
+                {{n3}}
+              </el-menu-item>
+              <template v-else>
+                <h2> Cannot parse the fourth level menu!</h2>
+              </template>    
+            </div>
+        </el-submenu>      
+      </div>
+    </el-submenu>
   </el-menu>
+
 </div>
 </template>
 
@@ -104,7 +131,8 @@ export default {
     handleSelect(key, keyPath) {
       console.log(key, keyPath);
       axios
-        .get('http://localhost:5000/plugins/'+key)
+        .post('http://localhost:5000/plugins/', JSON.stringify(keyPath), 
+          {headers: {'Content-Type': 'application/json'}})
         .then(response => (this.value = response.data))
         .catch(function (error) { // 请求失败处理
           console.log(error);

@@ -1,43 +1,9 @@
 from apiflask import APIFlask
 from flask_cors import CORS
-from flask import jsonify
+from flask import jsonify, request
 
 app = APIFlask(__name__)
 CORS(app)
-
-demo = [    
-    {
-      "name": "前端三大框架",
-      "path": "前端三大框架", 
-      "children": [
-        {
-          "name": "vue页面",
-          "path": "/vue",
-          "children": [],
-        },
-        {
-          "name": "react页面",
-          "path": "/react",
-          "children": [],
-        },
-      ],
-    },
-    {
-      "name": "后端三大框架",
-      "path": "后端三大框架", 
-      "children": [
-        {
-          "name": "vue页面",
-          "path": "/vue",
-          "children": [],
-        },
-      ],
-    },
-  ]
-
-@app.get('/')
-def index():
-    return jsonify(demo)
 
 class P:
     def __init__(self, name):
@@ -50,47 +16,64 @@ class P:
     def __call__(self):
         return self
     
-data = ('menu', [
+data_v1 = ('menu', [
             ('File', [
                 ('Open', P('O')),
-                ('Close', P('C'))]),
+                ('Close', P('Close'))]),
             ('Edit', [
-                ('Copy', P('C')),
+                ('Copy', P('Copy')),
                 ('A', [
                     ('B', P('B')),
                     ('C', P('C'))]),
                 ('Paste', P('P'))])])
 
-data_dict = {'menu': [
-              {'File': [
-                  {'Open': P('Ohh')},
-                  {'Close': P('C')}]}
-              ]
+
+data_dict = {'menu': {
+              'File': {
+                  'Open': P('O'),
+                  'Close': P('close'),
+                  },
+                
+              'Edit': {
+                  'Copy': P('Copy'),
+                  'A': {
+                    'B': P('B'),
+                    'C': P('C')
+                  },
+                  }
+              },
               }
 
 
-import json
-from JsonPathFinder import JsonPathFinder
-# finder = JsonPathFinder(json.dumps(data_dict, default=lambda obj: obj.__dict__))
-finder = JsonPathFinder(data_dict)
-path_list = finder.find_one('Close')
-# print('0000')          
-print('path = ',path_list)
+print('----------- testD -----------------')
+# print(data_dict['menu']['Edit']['A'])
 
+import json
+
+p= ["Edit", "A", "B"]
+
+def find_exe(data, p):
+    if len(p) > 1:
+        data = data[p[0]]
+        p.pop(0)
+        exe = find_exe(data, p)
+        return exe
+    elif len(p) == 1:
+        return data[p[0]]
+    else:
+        return None
+
+
+exe = find_exe(data_dict['menu'], p)
+print('exe = ', exe)
 
 
 @app.get('/t')
 def test():
-    return json.dumps(data, default=lambda obj: obj.__dict__)
-
-@app.get('/d')
-def test2():
     return json.dumps(data_dict, default=lambda obj: obj.__dict__)
 
-@app.get('/plugins/<p>')
-def plugin(p):
-  # print('p=',p)
-  pl = finder.find_one(p)
-  path_list = data_dict[pl[0]][pl[1]][pl[2]][pl[3]]
-  path_list[pl[4]].start('a')
-  return jsonify(pl)
+@app.post('/plugins/')
+def plugin():
+    print('p=', request.json)
+    exe = find_exe(data_dict['menu'], request.json)
+    return jsonify(exe.start('app'))
