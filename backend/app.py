@@ -46,7 +46,36 @@ data_dict = {'menu': {
 
 
 print('----------- testD -----------------')
+
+data_v2 = [
+            ('File', [
+                ('Open', P('O')),
+                ('Close', P('Close'))]),
+            ('Edit', [
+                ('Copy', P('Copy')),
+                ('A', [
+                    ('B', P('B')),
+                    ('C', P('C'))]),
+                ('Paste', P('P'))])]
+
+print(dict(data_v2))
 # print(data_dict['menu']['Edit']['A'])
+
+def tuple2dict(data_v2):
+    pass
+
+def flatten(plgs, lst=None):
+    if lst is None: lst = []
+    if isinstance(plgs, tuple):
+        if callable(plgs[1]): lst.append((plgs))
+        else: flatten(plgs[1], lst)
+    if isinstance(plgs, list):
+        for i in plgs: flatten(i, lst)
+    return lst
+
+print("*********")
+print(flatten(data_v1))
+
 
 import json
 
@@ -65,12 +94,15 @@ def find_exe(data, p):
 
 
 exe = find_exe(data_dict['menu'], p)
-print('exe = ', exe)
+# print('exe = ', exe)
 
+print("v1 dump")
+print(json.dumps(data_v1, default=lambda obj: obj.__dict__))
 
 @app.get('/t')
 def test():
-    return json.dumps(data_dict, default=lambda obj: obj.__dict__)
+    # return json.dumps(data_dict, default=lambda obj: obj.__dict__)
+    return json.dumps(data_v1[1], default=lambda obj: obj.__dict__)
 
 @app.post('/plugins/')
 def plugin():
