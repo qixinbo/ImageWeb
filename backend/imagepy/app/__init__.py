@@ -1,6 +1,7 @@
-from .imagepy import ImagePy
-from .imagej import ImageJ
-from .console import Console
-from .import startup
+# from .imagepy import ImagePy
+# from .imagej import ImageJ
+# from .console import Console
+from .imageweb import ImageWeb
+from . import startup
 
 from .manager import ConfigManager, ShortcutManager, ColorManager, DictManager, DocumentManager

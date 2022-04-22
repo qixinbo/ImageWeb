@@ -39,6 +39,6 @@ values = [np.fromfile(i, dtype=np.uint8).reshape((3,256)).T.copy() for i in file
 for k,v in zip(keys[::-1], values[::-1]): ColorManager.add(k, v, 'base')
 ColorManager.add('Grays', ColorManager.get('Grays'), 'base')
 
-from sciwx import ColorManager as ColorMap
-ColorMap.remove()
-ColorMap.adds(ColorManager.gets(tag='base')[::-1])
+# from sciwx import ColorManager as ColorMap
+# ColorMap.remove()
+# ColorMap.adds(ColorManager.gets(tag='base')[::-1])

@@ -1,4 +1,5 @@
-import wx, sys, os
+# import wx, sys, os
+import sys, os
 from .manager import *
 from . import loader
 from imagepy import root_dir
@@ -11,6 +12,15 @@ def extend_plgs(plg):
         return [extend_plgs(i) for i in plg]
     elif isinstance(plg, str): return plg
     else: return (plg.title, plg)
+
+def extend_plgs_for_json(plg):
+    if isinstance(plg, tuple):
+        return (plg[0].title, extend_plgs_for_json(plg[1]))
+    elif isinstance(plg, list):
+        return [extend_plgs_for_json(i) for i in plg]
+    elif isinstance(plg, str): return plg
+    else: return (plg.title, {plg.title:plg.title})
+
 
 def extend_tols(tol):
     if isinstance(tol, tuple) and isinstance(tol[1], list):
@@ -40,6 +50,22 @@ def load_plugins():
             if name in keydata: keydata[name].extend(j[1])
             else: data[1].append(j)
     return extend_plgs(data[:2]), data[2]
+
+def load_plugins_for_json():
+    data = loader.build_plugins(root_dir+'/menus')
+    extends = glob(root_dir+'/plugins/*/menus')
+    keydata = {}
+    for i in data[1]:
+        if isinstance(i, tuple): keydata[i[0].title] = i[1]
+    for i in extends:
+        plgs = loader.build_plugins(i)
+        data[2].extend(plgs[2])
+        for j in plgs[1]:
+            if not isinstance(j, tuple): continue
+            name = j[0].title
+            if name in keydata: keydata[name].extend(j[1])
+            else: data[1].append(j)
+    return extend_plgs_for_json(data[:2]), data[2]
 
 def load_tools():
     data = loader.build_tools('tools')
@@ -78,20 +104,21 @@ def load_dictionary():
     for i in lans: loader.build_dictionary(i)
 
 def start():
-    from . import ImagePy, ImageJ
-    import wx.lib.agw.advancedsplash as AS
-    app = wx.App(False)
-    bitmap = wx.Bitmap(root_dir+'/data/logolong.png', wx.BITMAP_TYPE_PNG)
-    shadow = wx.Colour(255,255,255)
-    asp = AS.AdvancedSplash(None, bitmap=bitmap, timeout=1000,
-        agwStyle=AS.AS_TIMEOUT |
-        AS.AS_CENTER_ON_PARENT |
-        AS.AS_SHADOW_BITMAP,
-        shadowcolour=shadow)
-    asp.Update()
+    # from . import ImagePy, ImageJ
+    # import wx.lib.agw.advancedsplash as AS
+    # app = wx.App(False)
+    # bitmap = wx.Bitmap(root_dir+'/data/logolong.png', wx.BITMAP_TYPE_PNG)
+    # shadow = wx.Colour(255,255,255)
+    # asp = AS.AdvancedSplash(None, bitmap=bitmap, timeout=1000,
+    #     agwStyle=AS.AS_TIMEOUT |
+    #     AS.AS_CENTER_ON_PARENT |
+    #     AS.AS_SHADOW_BITMAP,
+    #     shadowcolour=shadow)
+    # asp.Update()
+    # uistyle = ConfigManager.get('uistyle') or 'imagepy'
+    # frame = ImageJ(None) if uistyle == 'imagej' else ImagePy(None)
+    # frame.Show()
+    # app.MainLoop()
+
     load_document()
     load_dictionary()
-    uistyle = ConfigManager.get('uistyle') or 'imagepy'
-    frame = ImageJ(None) if uistyle == 'imagej' else ImagePy(None)
-    frame.Show()
-    app.MainLoop()
