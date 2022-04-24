@@ -1,7 +1,11 @@
 <template>
 <div>
  <!-- 对应data_v1 -->
- <el-menu class="el-menu-demo" background-color="#545c64" text-color="#fff" mode="horizontal" @select="handleSelect">
+<!--  <div>
+   <h1>{{value2}}</h1>
+ </div> -->
+ <el-menu class="el-menu-demo" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" 
+    mode="horizontal" @select="handleSelect">
     <el-submenu v-for='m1 in value2' :index="m1[0]" :key='m1[0]'>
       <template slot="title">{{m1[0]}}</template>
       <div v-for='m2 in m1[1]' :key='m2[0]'>
@@ -64,7 +68,7 @@ export default {
   },
   mounted(){
     axios
-      .get('http://localhost:5000/t')
+      .get('http://localhost:5000/menu')
       .then(response => (this.value2 = response.data))
       .catch(function (error) { // 请求失败处理
         console.log(error);
@@ -74,7 +78,7 @@ export default {
     handleSelect(key, keyPath) {
       console.log(key, keyPath);
       axios
-        .post('http://localhost:5000/plugins/', JSON.stringify(keyPath), 
+        .post('http://localhost:5000/plugins/', JSON.stringify(key), 
           {headers: {'Content-Type': 'application/json'}})
         .then(response => (this.value = response.data))
         .catch(function (error) { // 请求失败处理

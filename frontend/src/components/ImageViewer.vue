@@ -351,7 +351,9 @@ export default {
       widgetTypes,
       loading: false,
       activeSliders: [],
-      selectedWidgetTab: 0
+      selectedWidgetTab: 0,
+      image_layer: null,
+      shape_layer: null
     };
   },
   mounted() {
@@ -538,7 +540,14 @@ export default {
           openSidebar: this.openSidebar
         });
       } else {
-        await this.addLayer({
+
+        this.image_layer = await this.addLayer({
+          type: "2d-image",
+          name: "example image",
+          data: "https://images.proteinatlas.org/19661/221_G2_1_red_green.jpg"
+        });
+
+        this.shape_layer = await this.addLayer({
           type: "vector",
           name: "shape vectors",
           data:
@@ -547,6 +556,9 @@ export default {
           only_predefined_tags: true,
           single_tag_mode: false
         });
+        console.log(this.$store.state.currentLayer)
+        console.log('---', this.shape_layer.getLayerAPI().get_features())
+        console.log('!!!', this.image_layer.getSource())
       }
     },
     selectWidget(name) {

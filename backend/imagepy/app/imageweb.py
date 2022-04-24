@@ -18,7 +18,7 @@ class ImageWeb(App):
         self.init_table()
 
         self.load_menu()
-        self.load_menu_for_json()
+        # self.load_menu_for_json()
 
         self.source()
 
