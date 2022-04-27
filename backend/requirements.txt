@@ -1,2 +1,3 @@
-apiflask
-flask-cors
+fastapi
+uvicorn
+python-multipart

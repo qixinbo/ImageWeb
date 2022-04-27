@@ -4,6 +4,9 @@
 <!--  <div>
    <h1>{{value2}}</h1>
  </div> -->
+ <div>
+   <h1>{{value}}</h1>
+ </div>
  <el-menu class="el-menu-demo" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" 
     mode="horizontal" @select="handleSelect">
     <el-submenu v-for='m1 in value2' :index="m1[0]" :key='m1[0]'>
@@ -83,8 +86,10 @@ export default {
   },
   mounted(){
     axios
-      .get('http://localhost:5000/menu')
-      .then(response => (this.value2 = response.data))
+      .get('http://localhost:5000/menu/')
+      .then(response => {
+        this.value2 = response.data
+      })
       .catch(function (error) { // 请求失败处理
         console.log(error);
       })
@@ -99,6 +104,8 @@ export default {
       const data = new FormData()
       data.append('img', file, file.name)
 
+      console.log('data = ', data)
+
       // now upload
       const config = {
         headers: { 'Content-Type': 'multipart/form-data' }
@@ -109,8 +116,9 @@ export default {
       })
 
       axios
-        .post('http://localhost:5000/plugins/', JSON.stringify(key), 
-          {headers: {'Content-Type': 'application/json'}})
+        .get('http://localhost:5000/plugins/', {
+          params:{id: key}
+        })
         .then(response => (this.value = response.data))
         .catch(function (error) { // 请求失败处理
           console.log(error);
