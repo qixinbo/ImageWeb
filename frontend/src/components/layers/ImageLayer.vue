@@ -1,7 +1,9 @@
 <template>
   <div class="image-layer">
+    <!-- 通过组件的layer属性切换是否显示 -->
     <section v-if="layer">
       <b-field label="opacity">
+        <!-- 该组件在模板中只有一个滑动条 -->
         <b-slider
           v-model="config.opacity"
           @input="updateOpacity"
@@ -19,11 +21,13 @@
 </template>
 
 <script>
+// 从openlayers中导入必要的包
 import { Map } from "ol";
 import Static from "ol/source/ImageStatic";
 import ImageLayer from "ol/layer/Image";
 import Projection from "ol/proj/Projection";
 
+//将File对象转为base64编码的对象
 function file2base64(file) {
   return new Promise((resolve, reject) => {
     var reader = new FileReader();
@@ -37,6 +41,7 @@ function file2base64(file) {
   });
 }
 
+// 将图片url转为base64编码的对象
 async function url2base64(url) {
   return new Promise((resolve, reject) => {
     var img = new Image();
@@ -60,6 +65,7 @@ async function url2base64(url) {
   });
 }
 
+// 将无符号的整型数组转化为base64编码的对象
 function array2rgba(imageArr, ch, w, h) {
   const canvas = document.createElement("canvas");
   canvas.width = w;
@@ -115,7 +121,9 @@ export default {
   name: "image-layer",
   type: "2d-image",
   show: false,
+  // 从父组件中接收参数
   props: {
+    // map也是从父组件中传过来的存放于vuex中的map属性
     map: {
       type: Map,
       default: null
@@ -128,6 +136,7 @@ export default {
       type: Boolean,
       default: false
     },
+    // 这里的config会修改父组件中的config
     config: {
       type: Object,
       default: function() {
@@ -157,6 +166,7 @@ export default {
   },
   created() {},
   methods: {
+    // init初始化函数非常重要，它在vuex状态管理中被调用
     async init() {
       this.layer = await this.setupLayer();
       this.map.addLayer(this.layer);
@@ -167,14 +177,19 @@ export default {
       if (this.layer) this.layer.setOpacity(this.config.opacity);
     },
     selectLayer() {},
+
+    // 这里就是对this.layer进行加工的详细过程了
     async setupLayer() {
       let imgObj;
       const data = this.config.data;
+      // 根据data的类型，进行不同的转换
+      // 如果data是个字符串，比如是个图片路径
       if (typeof data === "string") {
+        // 调用url2base64函数将其转化成base64编码格式
         imgObj = await url2base64(this.config.data);
-      } else if (data instanceof File) {
+      } else if (data instanceof File) { // 如果是File对象实例，则调用file2base64
         imgObj = await file2base64(this.config.data);
-      } else if (
+      } else if ( // 如果不是上面两种格式，就应该是无符号的整型数组及一些尺寸属性
         data &&
         data.imageType &&
         data.size &&
@@ -210,19 +225,23 @@ export default {
         };
       }
       const extent = [0, 0, imgObj.w, imgObj.h];
+      // Map总是需要一个projection，这里只是想把图像坐标系映射到地图坐标系中，所以直接使用以像素为单位的图像内容来创建projection
       const projection = new Projection({
         code: "image",
         units: "pixels",
         extent: extent
       });
+      // 创建一个static对象来作为下面ImageLayer的source
       const image_source = new Static({
         url: imgObj.url,
         projection: projection,
         imageExtent: extent
       });
+      // 新建一个ImageLayer图层
       const image_layer = new ImageLayer({
         source: image_source
       });
+      // 向父组件发射消息，使其能够监听到自定义事件，目前看主要是影响了显示中心位置
       this.$emit("update-extent", { id: this.config.id, extent: extent });
       return image_layer;
     }

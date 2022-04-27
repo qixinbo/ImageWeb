@@ -38,3 +38,7 @@ def plugin():
     exe = imweb.plugin_manager.get(request.json)
     print(exe)
     return "hello world"
+
+@app.post('/img/')
+def img():
+    print('p=', request)
