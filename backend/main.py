@@ -1,7 +1,9 @@
-from fastapi import FastAPI, Form, File
+from fastapi import FastAPI, Form, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
 import json
+import shutil
 
 import imagepy
 from imagepy.app import ImageWeb
@@ -53,6 +55,8 @@ def plugins(id):
 
 
 @app.post('/img/')
-async def img(file: str = Form(...)):
-    print(file)
-    return "hello, img"
+async def img(img: UploadFile):
+    print("file = ", img.filename)
+    # with open("destination.png", "wb") as buffer:
+    #     shutil.copyfileobj(img.file, buffer)
+    return img.filename

@@ -6,6 +6,7 @@
  </div> -->
  <div>
    <h1>{{value}}</h1>
+   <h1>{{value3}}</h1>
  </div>
  <el-menu class="el-menu-demo" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" 
     mode="horizontal" @select="handleSelect">
@@ -61,7 +62,7 @@
 <script>
 import axios from 'axios';
 
-
+// https://gist.github.com/ibreathebsb/a104a9297d5df4c8ae944a4ed149bcf1
 // helper function: generate a new file from base64 String
 const dataURLtoFile = (dataurl, filename) => {
   const arr = dataurl.split(',')
@@ -82,6 +83,7 @@ export default {
     return {
       value: 123,
       value2: 'change after clicked',
+      value3: 456,
     }
   },
   mounted(){
@@ -98,22 +100,26 @@ export default {
     handleSelect(key, keyPath) {
       console.log(key, keyPath);
 
-      // generate file from base64 string
-      const file = dataURLtoFile('data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUA    AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==')
+      // // generate file from base64 string
+      const file = dataURLtoFile('data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUA    AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==', 'myfile')
+
       // put file into form data
       const data = new FormData()
       data.append('img', file, file.name)
-
-      console.log('data = ', data)
 
       // now upload
       const config = {
         headers: { 'Content-Type': 'multipart/form-data' }
       }
 
-      axios.post('http://localhost:5000/img/', data, config).then(response => {
-        console.log(response.data)
-      })
+      axios
+        .post('http://localhost:5000/img/', data, config)
+        .then(response => {
+          this.value3 = response.data
+        })
+        .catch(function (error) { // 请求失败处理
+          console.log(error);
+        })   
 
       axios
         .get('http://localhost:5000/plugins/', {
