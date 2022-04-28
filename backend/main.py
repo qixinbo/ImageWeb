@@ -54,6 +54,9 @@ def plugins(id):
     return "hello world"
 
 
+# ref:
+# https://levelup.gitconnected.com/how-to-save-uploaded-files-in-fastapi-90786851f1d3
+
 @app.post('/img/')
 async def img(img: UploadFile):
     print("file = ", img.filename)

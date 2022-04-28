@@ -45,7 +45,7 @@ class ImageWeb(App):
         self.plugin_manager.remove()       
         for name, plg in self.flatten(plgs): 
             self.add_plugin(name, plg, 'plugin')
-
+        # print(plgs)
         return plgs
 
     def load_menu_for_json(self):
