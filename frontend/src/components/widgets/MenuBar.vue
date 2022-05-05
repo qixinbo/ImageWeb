@@ -8,6 +8,9 @@
    <h1>{{value}}</h1>
    <h1>{{value3}}</h1>
  </div> -->
+ <img class="fit-picture" id='myImage'
+     src="/static/img/kaibu-banner.png"
+     alt="Grapefruit slice atop a pile of other slices">
  <el-menu class="el-menu-demo" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" 
     mode="horizontal" @select="handleSelect">
     <el-submenu v-for='m1 in value2' :index="m1[0]" :key='m1[0]'>
@@ -112,14 +115,64 @@ export default {
         headers: { 'Content-Type': 'multipart/form-data' }
       }
 
-      axios
-        .post('http://localhost:5000/img/', data, config)
-        .then(response => {
-          this.value3 = response.data
-        })
-        .catch(function (error) { // 请求失败处理
-          console.log(error);
-        })   
+      // axios
+      //   .post('http://localhost:5000/img/', data, config)
+      //   .then(response => {
+      //     // this.value3 = response.data
+      //     console.log("^^^^^")
+      //     console.log(response)
+      //   })
+      //   .catch(function (error) { // 请求失败处理
+      //     console.log(error);
+      //   });
+
+      let base64string = ''
+      let contentType = ''
+      axios({
+              method: 'POST',
+              url: 'http://localhost:5000/img/',
+              data: data,
+              headers: {
+                  'Content-Type': 'multipart/form-data'
+              },
+              responseType: "arraybuffer"
+          })
+          .then(response => {
+              console.log("--------")
+              base64string = btoa(String.fromCharCode(...new Uint8Array(response.data)))
+              console.log(base64string)
+              contentType = response.headers['content-type']
+              return base64string;
+          })
+          .then(base64string => {
+              var image = document.getElementById("myImage");
+              image.src = "data:" + contentType + ";base64," + base64string;
+          })
+          .catch(error => {
+              console.error(error);
+          });
+
+      // axios({
+      //         method: 'POST',
+      //         url: 'http://localhost:5000/img/',
+      //         data: data,
+      //         headers: {
+      //             'Content-Type': 'multipart/form-data'
+      //         },
+      //         responseType: "blob"
+      //     })
+      //   .then(response => {
+      //       var blobURL = URL.createObjectURL(response.data);
+      //       var image = document.getElementById("myImage");
+      //       image.onload = function(){
+      //           URL.revokeObjectURL(this.src); // release the blob URL once the image is loaded
+      //       }
+      //       image.src = blobURL;
+      //   })
+      //   .catch(error => {
+      //       console.error(error);
+      //   });
+
 
       axios
         .get('http://localhost:5000/plugins/', {

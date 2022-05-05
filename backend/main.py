@@ -1,9 +1,12 @@
 from fastapi import FastAPI, Form, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 import json
 import shutil
+from io import BytesIO
+from PIL import Image, ImageFilter
 
 import imagepy
 from imagepy.app import ImageWeb
@@ -54,12 +57,24 @@ def plugins(id):
     return "hello world"
 
 
-# ref:
+# refs:
 # https://levelup.gitconnected.com/how-to-save-uploaded-files-in-fastapi-90786851f1d3
+# https://cloudbytes.dev/snippets/received-return-a-file-from-in-memory-buffer-using-fastapi
+# https://stackoverflow.com/questions/71595635/render-numpy-array-in-fastapi
+# https://stackoverflow.com/questions/71313129/how-to-render-streamable-image-on-react-coming-from-the-fastapi/71324775#71324775
 
 @app.post('/img/')
 async def img(img: UploadFile):
     print("file = ", img.filename)
     # with open("destination.png", "wb") as buffer:
     #     shutil.copyfileobj(img.file, buffer)
-    return img.filename
+    # return img.filename
+
+    original_image = Image.open(img.file)
+    original_image = original_image.filter(ImageFilter.BLUR)
+
+    filtered_image = BytesIO()
+    original_image.save(filtered_image, "PNG")
+    filtered_image.seek(0)
+
+    return StreamingResponse(filtered_image, media_type="image/png")
