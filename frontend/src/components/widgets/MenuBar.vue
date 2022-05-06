@@ -97,15 +97,17 @@ export default {
       })
       .catch(function (error) { // 请求失败处理
         console.log(error);
-      })
+      });
   },
   methods: {
     handleSelect(key, keyPath) {
       console.log(key, keyPath);
 
       // // generate file from base64 string
-      const file = dataURLtoFile('data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUA    AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==', 'myfile')
+      // const file = dataURLtoFile('data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUA    AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==', 'myfile')
 
+      const dataURL = this.$store.state.layers[this.$store.state.currentLayer.id].getSource().getUrl()
+      const file = dataURLtoFile(dataURL)
       // put file into form data
       const data = new FormData()
       data.append('img', file, file.name)
@@ -115,19 +117,6 @@ export default {
         headers: { 'Content-Type': 'multipart/form-data' }
       }
 
-      // axios
-      //   .post('http://localhost:5000/img/', data, config)
-      //   .then(response => {
-      //     // this.value3 = response.data
-      //     console.log("^^^^^")
-      //     console.log(response)
-      //   })
-      //   .catch(function (error) { // 请求失败处理
-      //     console.log(error);
-      //   });
-
-      let base64string = ''
-      let contentType = ''
       axios({
               method: 'POST',
               url: 'http://localhost:5000/img/',
@@ -135,43 +124,20 @@ export default {
               headers: {
                   'Content-Type': 'multipart/form-data'
               },
-              responseType: "arraybuffer"
+              responseType: "blob"
           })
-          .then(response => {
-              console.log("--------")
-              base64string = btoa(String.fromCharCode(...new Uint8Array(response.data)))
-              console.log(base64string)
-              contentType = response.headers['content-type']
-              return base64string;
-          })
-          .then(base64string => {
-              var image = document.getElementById("myImage");
-              image.src = "data:" + contentType + ";base64," + base64string;
-          })
-          .catch(error => {
-              console.error(error);
-          });
-
-      // axios({
-      //         method: 'POST',
-      //         url: 'http://localhost:5000/img/',
-      //         data: data,
-      //         headers: {
-      //             'Content-Type': 'multipart/form-data'
-      //         },
-      //         responseType: "blob"
-      //     })
-      //   .then(response => {
-      //       var blobURL = URL.createObjectURL(response.data);
-      //       var image = document.getElementById("myImage");
-      //       image.onload = function(){
-      //           URL.revokeObjectURL(this.src); // release the blob URL once the image is loaded
-      //       }
-      //       image.src = blobURL;
-      //   })
-      //   .catch(error => {
-      //       console.error(error);
-      //   });
+        .then(response => {
+            var blobURL = URL.createObjectURL(response.data);
+            console.log("blobURL = ", blobURL)
+            var image = document.getElementById("myImage");
+            image.onload = function(){
+                URL.revokeObjectURL(this.src); // release the blob URL once the image is loaded
+            }
+            image.src = blobURL;
+        })
+        .catch(error => {
+            console.error(error);
+        });
 
 
       axios

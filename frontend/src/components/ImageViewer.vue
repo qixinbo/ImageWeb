@@ -547,19 +547,18 @@ export default {
           data: "https://images.proteinatlas.org/19661/221_G2_1_red_green.jpg"
         });
 
-        console.log(this.$store.state.currentLayer)
-        this.shape_layer = await this.addLayer({
-          type: "vector",
-          name: "shape vectors",
-          data:
-            "https://gist.githubusercontent.com/oeway/7c62128939a7f9b1701e2bbd72b809dc/raw/example_shape_vectors.json",
-          predefined_tags: ["nuclei", "cell"],
-          only_predefined_tags: true,
-          single_tag_mode: false
-        });
-        console.log("store.state = ", this.$store.state)
-        console.log(this.$store.state.currentLayer)
-        console.log('!!!', this.image_layer.getSource().getUrl())
+        // this.shape_layer = await this.addLayer({
+        //   type: "vector",
+        //   name: "shape vectors",
+        //   data:
+        //     "https://gist.githubusercontent.com/oeway/7c62128939a7f9b1701e2bbd72b809dc/raw/example_shape_vectors.json",
+        //   predefined_tags: ["nuclei", "cell"],
+        //   only_predefined_tags: true,
+        //   single_tag_mode: false
+        // });
+        // console.log("store.state = ", this.$store.state)
+        // console.log(this.$store.state.currentLayer)
+        // console.log('!!!', this.image_layer.getSource().getUrl())
         // console.log('---', this.shape_layer.getVisible())
         // console.log('---', this.shape_layer.getLayerAPI())
       }
