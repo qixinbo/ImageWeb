@@ -238,6 +238,7 @@ import { defaults } from "ol/interaction";
 import { randId } from "../utils";
 import * as layerComponents from "@/components/layers";
 import * as widgetComponents from "@/components/widgets";
+
 import { Projection } from "ol/proj";
 import { getCenter } from "ol/extent";
 import { mapState } from "vuex";

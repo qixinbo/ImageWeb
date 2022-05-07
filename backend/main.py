@@ -3,13 +3,17 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
+import imagepy
+from imagepy.app import ImageWeb
+
+import base64
 import json
 import shutil
 from io import BytesIO
 from PIL import Image, ImageFilter
+import numpy as np
+import cv2
 
-import imagepy
-from imagepy.app import ImageWeb
 
 app = FastAPI()
 
@@ -63,18 +67,65 @@ def plugins(id):
 # https://stackoverflow.com/questions/71595635/render-numpy-array-in-fastapi
 # https://stackoverflow.com/questions/71313129/how-to-render-streamable-image-on-react-coming-from-the-fastapi/71324775#71324775
 
+# https://stackoverflow.com/questions/61333907/receiving-an-image-with-fast-api-processing-it-with-cv2-then-returning-it
+
+# https://stackoverflow.com/questions/6375942/how-do-you-base-64-encode-a-png-image-for-use-in-a-data-uri-in-a-css-file
+
+# @app.post('/img/')
+# async def img(img: UploadFile):
+#     print("file = ", img.filename)
+#     # with open("destination.png", "wb") as buffer:
+#     #     shutil.copyfileobj(img.file, buffer)
+#     # return img.filename
+
+#     original_image = Image.open(img.file)
+#     original_image = original_image.filter(ImageFilter.BLUR)
+
+#     filtered_image = BytesIO()
+#     original_image.save(filtered_image, "PNG")
+#     filtered_image.seek(0)
+
+#     return StreamingResponse(filtered_image, media_type="image/png")
+
+
 @app.post('/img/')
-async def img(img: UploadFile):
-    print("file = ", img.filename)
-    # with open("destination.png", "wb") as buffer:
-    #     shutil.copyfileobj(img.file, buffer)
-    # return img.filename
+async def img(file: UploadFile = File(...)):
+    contents = await file.read()
+    nparr = np.fromstring(contents, np.uint8)
 
-    original_image = Image.open(img.file)
-    original_image = original_image.filter(ImageFilter.BLUR)
+    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
-    filtered_image = BytesIO()
-    original_image.save(filtered_image, "PNG")
-    filtered_image.seek(0)
+    # img_dimensions = str(img.shape)
 
-    return StreamingResponse(filtered_image, media_type="image/png")
+    # return_img = processImage(img)
+    # return_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    return_img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+    # return_img = img
+
+    _, encoded_img = cv2.imencode('.PNG', return_img)
+
+    encoded_img = base64.b64encode(encoded_img).decode('ascii')
+
+    return {
+        'filename': file.filename,
+        'dimensions': {
+            'height': img.shape[0],
+            'width': img.shape[1],
+            'channels': img.shape[2]
+        },
+        'encoded_img': 'data:image/png;base64,{}'.format(encoded_img),
+    }
+
+    # print("file = ", file.filename)
+    # # with open("destination.png", "wb") as buffer:
+    # #     shutil.copyfileobj(img.file, buffer)
+    # # return img.filename
+
+    # original_image = Image.open(file.file)
+    # original_image = original_image.filter(ImageFilter.BLUR)
+
+    # filtered_image = BytesIO()
+    # original_image.save(filtered_image, "PNG")
+    # filtered_image.seek(0)
+
+    # return StreamingResponse(filtered_image, media_type="image/png")

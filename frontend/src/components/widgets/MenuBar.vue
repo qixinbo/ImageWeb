@@ -3,14 +3,15 @@
  <!-- 对应data_v1 -->
 <!--  <div>
    <h1>{{value2}}</h1>
- </div> -->
-<!--  <div>
+ </div>
+ <div>
    <h1>{{value}}</h1>
    <h1>{{value3}}</h1>
- </div> -->
- <img class="fit-picture" id='myImage'
+ </div>
+ --> 
+<!--  <img class="fit-picture" id='myImage'
      src="/static/img/kaibu-banner.png"
-     alt="Grapefruit slice atop a pile of other slices">
+     alt="Grapefruit slice atop a pile of other slices"/> -->
  <el-menu class="el-menu-demo" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" 
     mode="horizontal" @select="handleSelect">
     <el-submenu v-for='m1 in value2' :index="m1[0]" :key='m1[0]'>
@@ -64,7 +65,8 @@
 
 <script>
 import axios from 'axios';
-
+import Static from "ol/source/ImageStatic";
+import Projection from "ol/proj/Projection";
 // https://gist.github.com/ibreathebsb/a104a9297d5df4c8ae944a4ed149bcf1
 // helper function: generate a new file from base64 String
 const dataURLtoFile = (dataurl, filename) => {
@@ -106,11 +108,12 @@ export default {
       // // generate file from base64 string
       // const file = dataURLtoFile('data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUA    AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==', 'myfile')
 
-      const dataURL = this.$store.state.layers[this.$store.state.currentLayer.id].getSource().getUrl()
+      const layer = this.$store.state.layers[this.$store.state.currentLayer.id]
+      const dataURL = layer.getSource().getUrl()
       const file = dataURLtoFile(dataURL)
       // put file into form data
       const data = new FormData()
-      data.append('img', file, file.name)
+      data.append('file', file, file.name)
 
       // now upload
       const config = {
@@ -123,17 +126,34 @@ export default {
               data: data,
               headers: {
                   'Content-Type': 'multipart/form-data'
-              },
-              responseType: "blob"
+              }
           })
         .then(response => {
-            var blobURL = URL.createObjectURL(response.data);
-            console.log("blobURL = ", blobURL)
-            var image = document.getElementById("myImage");
-            image.onload = function(){
-                URL.revokeObjectURL(this.src); // release the blob URL once the image is loaded
-            }
-            image.src = blobURL;
+          // console.log("----", response.data)
+          const dimensions = response.data.dimensions
+          // console.log(response.data.dimensions.split(',').map(Number))
+          // console.log("url", dataURL)
+
+
+          const extent = [0, 0, dimensions.width, dimensions.height];
+          // const extent = [0, 0, 2048, 2048];
+          // Map总是需要一个projection，这里只是想把图像坐标系映射到地图坐标系中，所以直接使用以像素为单位的图像内容来创建projection
+          const projection = new Projection({
+            code: "image",
+            units: "pixels",
+            extent: extent
+          });
+          // 创建一个static对象来作为下面ImageLayer的source
+          const image_source = new Static({
+            url: response.data.encoded_img,
+            projection: projection,
+            imageExtent: extent
+          });
+
+          layer.setSource(image_source)
+
+          // console.log("new url", layer.getSource().getUrl())
+
         })
         .catch(error => {
             console.error(error);
