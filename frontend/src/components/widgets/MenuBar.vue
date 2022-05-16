@@ -9,9 +9,6 @@
    <h1>{{value3}}</h1>
  </div>
  --> 
-<!--  <img class="fit-picture" id='myImage'
-     src="/static/img/kaibu-banner.png"
-     alt="Grapefruit slice atop a pile of other slices"/> -->
  <el-menu class="el-menu-demo" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" 
     mode="horizontal" @select="handleSelect">
     <el-submenu v-for='m1 in value2' :index="m1[0]" :key='m1[0]'>
@@ -34,30 +31,6 @@
       </div>
     </el-submenu>
   </el-menu>
-
-  <!-- for data_dict -->
-<!--  <el-menu class="el-menu-demo" mode="horizontal" @select="handleSelect">
-    <el-submenu v-for='(m1, n1) in value2["menu"]' :index="n1" :key='n1'>
-      <template slot="title">{{n1}}</template>
-      <div v-for='(m2, n2) in m1' :key='n2'>
-        <el-menu-item v-if='m2.hasOwnProperty("name")' :index="n2" :key='n2'>
-          {{n2}}
-        </el-menu-item>
-        <el-submenu v-else :index="n2">
-          <template slot="title">{{n2}}</template>
-            <div v-for='(m3, n3) in m2' :key='n3'>
-              <el-menu-item v-if='m3.hasOwnProperty("name")' :index="n3" :key='n3'>
-                {{n3}}
-              </el-menu-item>
-              <template v-else>
-                <h2> Cannot parse the fourth level menu!</h2>
-              </template>    
-            </div>
-        </el-submenu>      
-      </div>
-    </el-submenu>
-  </el-menu> -->
-
 </div>
 </template>
 
@@ -131,13 +104,11 @@ export default {
         .then(response => {
           // console.log("----", response.data)
           const dimensions = response.data.dimensions
-          // console.log(response.data.dimensions.split(',').map(Number))
           // console.log("url", dataURL)
 
 
           const extent = [0, 0, dimensions.width, dimensions.height];
           // const extent = [0, 0, 2048, 2048];
-          // Map总是需要一个projection，这里只是想把图像坐标系映射到地图坐标系中，所以直接使用以像素为单位的图像内容来创建projection
           const projection = new Projection({
             code: "image",
             units: "pixels",

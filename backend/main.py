@@ -71,23 +71,6 @@ def plugins(id):
 
 # https://stackoverflow.com/questions/6375942/how-do-you-base-64-encode-a-png-image-for-use-in-a-data-uri-in-a-css-file
 
-# @app.post('/img/')
-# async def img(img: UploadFile):
-#     print("file = ", img.filename)
-#     # with open("destination.png", "wb") as buffer:
-#     #     shutil.copyfileobj(img.file, buffer)
-#     # return img.filename
-
-#     original_image = Image.open(img.file)
-#     original_image = original_image.filter(ImageFilter.BLUR)
-
-#     filtered_image = BytesIO()
-#     original_image.save(filtered_image, "PNG")
-#     filtered_image.seek(0)
-
-#     return StreamingResponse(filtered_image, media_type="image/png")
-
-
 @app.post('/img/')
 async def img(file: UploadFile = File(...)):
     contents = await file.read()
@@ -115,17 +98,3 @@ async def img(file: UploadFile = File(...)):
         },
         'encoded_img': 'data:image/png;base64,{}'.format(encoded_img),
     }
-
-    # print("file = ", file.filename)
-    # # with open("destination.png", "wb") as buffer:
-    # #     shutil.copyfileobj(img.file, buffer)
-    # # return img.filename
-
-    # original_image = Image.open(file.file)
-    # original_image = original_image.filter(ImageFilter.BLUR)
-
-    # filtered_image = BytesIO()
-    # original_image.save(filtered_image, "PNG")
-    # filtered_image.seek(0)
-
-    # return StreamingResponse(filtered_image, media_type="image/png")
