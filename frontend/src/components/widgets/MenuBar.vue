@@ -87,6 +87,7 @@ export default {
       // put file into form data
       const data = new FormData()
       data.append('file', file, file.name)
+      data.append('plugin', key)
 
       // now upload
       const config = {

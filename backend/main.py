@@ -57,7 +57,6 @@ def menu():
 @app.get('/plugins/')
 def plugins(id):
     exe = imweb.plugin_manager.get(id)
-    print(exe)
     return "hello world"
 
 
@@ -72,7 +71,10 @@ def plugins(id):
 # https://stackoverflow.com/questions/6375942/how-do-you-base-64-encode-a-png-image-for-use-in-a-data-uri-in-a-css-file
 
 @app.post('/img/')
-async def img(file: UploadFile = File(...)):
+async def img(file: UploadFile = File(...), plugin: str = Form(...)):
+    exe = imweb.plugin_manager.get(plugin)
+    print('exe = ', exe().tag)
+
     contents = await file.read()
     nparr = np.fromstring(contents, np.uint8)
 
