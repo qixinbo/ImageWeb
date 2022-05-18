@@ -73,7 +73,7 @@ def plugins(id):
 @app.post('/img/')
 async def img(file: UploadFile = File(...), plugin: str = Form(...)):
     exe = imweb.plugin_manager.get(plugin)
-    print('exe = ', exe().tag)
+    print('exe = ', exe().tag) # call the properties
 
     contents = await file.read()
     nparr = np.fromstring(contents, np.uint8)
