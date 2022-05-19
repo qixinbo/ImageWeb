@@ -5,12 +5,10 @@ from pydantic import BaseModel
 
 import imagepy
 from imagepy.app import ImageWeb
+from sciapp.object import Image
 
 import base64
 import json
-import shutil
-from io import BytesIO
-from PIL import Image, ImageFilter
 import numpy as np
 import cv2
 
@@ -26,7 +24,7 @@ app.add_middleware(
 )
 
 
-imweb = ImageWeb(None)
+imweb = ImageWeb()
 menus = imweb.load_menu_for_json()
 
 def flatten(plgs, lst=None):
@@ -73,19 +71,31 @@ def plugins(id):
 @app.post('/img/')
 async def img(file: UploadFile = File(...), plugin: str = Form(...)):
     exe = imweb.plugin_manager.get(plugin)
-    print('exe = ', exe().tag) # call the properties
+    # print('exe = ', exe().tag) # call the properties
+
 
     contents = await file.read()
     nparr = np.fromstring(contents, np.uint8)
 
+    print("nparr = ", nparr)
+
+    #################### test 1 ########################
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+    print("img after cv2 decode = ", img.shape)
 
     # img_dimensions = str(img.shape)
-
-    # return_img = processImage(img)
     # return_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    return_img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+    # return_img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
     # return_img = img
+    #################### end of test 1 ########################
+
+    imgPlus = Image([img])
+    print('img2 = ', imgPlus.img.shape)
+    imweb.show_img(imgPlus, file.filename)
+
+    exe().start(imweb)
+    return_img = imgPlus.img
+    print("return_img = ", return_img)
 
     _, encoded_img = cv2.imencode('.PNG', return_img)
 
@@ -94,9 +104,9 @@ async def img(file: UploadFile = File(...), plugin: str = Form(...)):
     return {
         'filename': file.filename,
         'dimensions': {
-            'height': img.shape[0],
-            'width': img.shape[1],
-            'channels': img.shape[2]
+            'height': imgPlus.img.shape[0],
+            'width': imgPlus.img.shape[1],
+            'channels': imgPlus.img.shape[2]
         },
         'encoded_img': 'data:image/png;base64,{}'.format(encoded_img),
     }

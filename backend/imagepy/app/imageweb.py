@@ -9,7 +9,7 @@ from .startup import load_plugins, load_plugins_for_json, load_tools, load_widge
 from .manager import ConfigManager, DictManager, ShortcutManager, DocumentManager
 
 class ImageWeb(App):
-    def __init__( self, parent ):
+    def __init__(self):
         App.__init__(self)
         
         logopath = os.path.join(root_dir, 'data/logo.ico')
