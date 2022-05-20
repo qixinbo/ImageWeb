@@ -68,12 +68,19 @@ def plugins(id):
 
 # https://stackoverflow.com/questions/6375942/how-do-you-base-64-encode-a-png-image-for-use-in-a-data-uri-in-a-css-file
 
+def process(plugin, img, name):
+    exe = imweb.plugin_manager.get(plugin)
+
+    imgPlus = Image([img])
+    print('img2 = ', imgPlus.img.shape)
+    imweb.show_img(imgPlus, name)
+
+    exe().start(imweb)
+    processed_img = imgPlus.img
+    return processed_img
+
 @app.post('/img/')
 async def img(file: UploadFile = File(...), plugin: str = Form(...)):
-    exe = imweb.plugin_manager.get(plugin)
-    # print('exe = ', exe().tag) # call the properties
-
-
     contents = await file.read()
     nparr = np.fromstring(contents, np.uint8)
 
@@ -89,24 +96,19 @@ async def img(file: UploadFile = File(...), plugin: str = Form(...)):
     # return_img = img
     #################### end of test 1 ########################
 
-    imgPlus = Image([img])
-    print('img2 = ', imgPlus.img.shape)
-    imweb.show_img(imgPlus, file.filename)
+    processed_img = process(plugin, img, file.filename)
 
-    exe().start(imweb)
-    return_img = imgPlus.img
-    print("return_img = ", return_img)
-
-    _, encoded_img = cv2.imencode('.PNG', return_img)
+    _, encoded_img = cv2.imencode('.PNG', processed_img)
 
     encoded_img = base64.b64encode(encoded_img).decode('ascii')
+
 
     return {
         'filename': file.filename,
         'dimensions': {
-            'height': imgPlus.img.shape[0],
-            'width': imgPlus.img.shape[1],
-            'channels': imgPlus.img.shape[2]
+            'height': processed_img.shape[0],
+            'width': processed_img.shape[1],
+            'channels': 1 if processed_img.ndim==2 else processed_img.shape[2]
         },
         'encoded_img': 'data:image/png;base64,{}'.format(encoded_img),
     }

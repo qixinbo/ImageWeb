@@ -9,7 +9,7 @@ import numpy as np
 
 class Simple:
     title = 'SimpleFilter'
-    asyn = True
+    asyn = False
     note = []
     para = None
     'all, 8-bit, 16-bit, rgb, float, req_roi, stack, stack2d, stack3d, preview'
