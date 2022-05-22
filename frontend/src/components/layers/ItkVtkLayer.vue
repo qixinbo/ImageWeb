@@ -1,6 +1,9 @@
 <template>
   <div class="itk-vtk-layer">
     <section>
+      <!-- input表单 -->
+      <!-- 该元素不显示，见其style参数 -->
+      <!-- 但是在getFiles()中会被调用click()，从而获取文件列表FileList -->
       <input
         ref="file_input"
         @change="resolveFiles && resolveFiles($event)"
@@ -9,6 +12,8 @@
         multiple
       />
 
+      <!-- 该按钮也默认不显示 -->
+      <!-- 但是在getFiles()方法中会调用 -->
       <b-button
         v-if="showLoadButton"
         @click="$refs.file_input.click()"
@@ -17,6 +22,7 @@
         Load File(s)
       </b-button>
     </section>
+    <!-- 控制透明度的滑块 -->
     <b-field v-if="layer" label="opacity">
       <b-slider
         v-model="config.opacity"
@@ -26,6 +32,8 @@
         :step="0.1"
       ></b-slider>
     </b-field>
+
+    <!-- 控制混合模式的下拉列表 -->
     <b-field v-if="layer" label="Blending">
       <b-select placeholder="Select a mode" v-model="blending">
         <option v-for="b in blendingOptions" :value="b" :key="b">
@@ -41,10 +49,14 @@
 </template>
 
 <script>
+// 从Openlayers中导入必要的包
 import { Map } from "ol";
 import { Pointer } from "ol/interaction";
 import Layer from "ol/layer/Layer";
+// 导入UPNG.js库，其是一个小巧快速的对PNG/APNG图片编码器和解码器
 import UPNG from "upng-js/UPNG";
+// 因为itkVtkViewerCDN.js已经在index.html中引入，所以window中可以找到它
+// 在这里引入itkVtkViewer
 const itkVtkViewer = window.itkVtkViewer;
 
 const CanvasLayer = /*@__PURE__*/ (function(Layer) {
@@ -114,11 +126,15 @@ function convertImageUrl2Itk(url) {
 
 const camelToSnakeCase = str =>
   str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+
+
 export default {
   name: "itk-vtk-layer",
   type: "itk-vtk",
   show: true,
+  // 从父组件中接收的参数
   props: {
+    // map也是从父组件中传过来的存放于vuex中的map属性
     map: {
       type: Map,
       default: null
@@ -131,6 +147,7 @@ export default {
       type: Boolean,
       default: false
     },
+    // 这里的config会修改父组件中的config
     config: {
       type: Object,
       default: function() {
@@ -145,6 +162,7 @@ export default {
       resolveFiles: null,
       showLoadButton: false,
       blending: null,
+      // 混合模式列表
       blendingOptions: [
         "normal",
         "multiply",
@@ -181,6 +199,7 @@ export default {
     this.config.opacity =
       typeof this.config.opacity === "number" ? this.config.opacity : 1.0;
     this._lastOpacity = this.config.opacity;
+    // 将该组件的init方法传递给父组件的config
     this.config.init = this.init;
     this.config.blending = this.config.blending || "normal";
     this.blending = this.config.blending;
@@ -192,6 +211,7 @@ export default {
   },
   created() {},
   methods: {
+    // init初始化函数非常重要，它在vuex状态管理中被调用
     async init() {
       this.layer = await this.setupLayer();
       this.map.addLayer(this.layer);
@@ -343,14 +363,20 @@ export default {
         //TODO: udpate the extent when selecting different plane
         extent = [extent_3d[0], extent_3d[2], extent_3d[1], extent_3d[3]];
       } else {
+        // 得到文件列表
         let files;
         if (this.config.data instanceof File) {
           files = [this.config.data];
-        } else if (this.config.data instanceof FileList) {
+        } 
+        else if (this.config.data instanceof FileList) {
           files = this.config.data;
-        } else files = await this.getFiles();
+        } 
+        else {
+          files = await this.getFiles();
+        }
 
         try {
+          // 向父组件发射消息
           this.$emit("loading", true);
           const cfg = await itkVtkViewer.utils.readFiles({ files: files });
           cfg.uiContainer = document.getElementById("toolbar");
@@ -391,6 +417,7 @@ export default {
         viewer.setUserInterfaceCollapsed(false);
       }, 10);
       this.viewer = viewer;
+
       this.$emit("update-extent", { id: this.config.id, extent: extent });
 
       itk_layer.getLayerAPI = this.getLayerAPI;

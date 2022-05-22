@@ -82,6 +82,7 @@ export default {
       // const file = dataURLtoFile('data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUA    AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==', 'myfile')
 
       const layer = this.$store.state.layers[this.$store.state.currentLayer.id]
+
       const dataURL = layer.getSource().getUrl()
       const file = dataURLtoFile(dataURL)
       // put file into form data
