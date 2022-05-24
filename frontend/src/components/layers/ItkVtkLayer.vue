@@ -59,6 +59,8 @@ import UPNG from "upng-js/UPNG";
 // 在这里引入itkVtkViewer
 const itkVtkViewer = window.itkVtkViewer;
 
+import ITKHelper from 'vtk.js/Sources/Common/DataModel/ITKHelper';
+
 const CanvasLayer = /*@__PURE__*/ (function(Layer) {
   function CanvasLayer(options) {
     options = options || {};
@@ -224,6 +226,7 @@ export default {
     },
     selectLayer() {},
     async normalizeImage(data) {
+      console.log("data = ", data)
       let imageData;
       if (typeof data === "object") {
         imageData = data;
@@ -306,6 +309,7 @@ export default {
         }
       }
 
+      console.log("imageData = ", imageData)
       // this.config.name = this.config.type;
       // this.config.data =
       //   "https://images.proteinatlas.org/19661/221_G2_1_red_green.jpg";
@@ -379,6 +383,9 @@ export default {
           // 向父组件发射消息
           this.$emit("loading", true);
           const cfg = await itkVtkViewer.utils.readFiles({ files: files });
+          console.log("cfg = ", cfg.image)
+          
+
           cfg.uiContainer = document.getElementById("toolbar");
           is2D = cfg.use2D;
           cfg.uiContainer = document.getElementById(
@@ -402,6 +409,10 @@ export default {
       }
       if (!viewer) throw "Failed to load itk-vtk-viewer";
       this.config.name = this.config.name || this.config.type;
+      console.log("viewer = ", viewer.getImage())
+
+      console.log("haha = ", ITKHelper.convertVtkToItkImage(viewer.getImage()))
+
       const viewProxy = viewer.getViewProxy();
       const renderWindow = viewProxy.getRenderWindow();
       renderWindow.getViews()[0].initialize();

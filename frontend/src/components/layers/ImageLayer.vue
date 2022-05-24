@@ -77,6 +77,7 @@ function array2rgba(imageArr, ch, w, h) {
 
   const raw = new Uint8Array(imageArr.buffer);
   if (imageArr instanceof Uint8Array) {
+    console.log("channel = ", ch)
     if (ch === 1) {
       for (let i = 0; i < count; i++) {
         canvas_img_data[i * 4] = raw[i];

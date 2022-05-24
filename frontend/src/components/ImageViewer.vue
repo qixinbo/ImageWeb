@@ -543,7 +543,7 @@ export default {
       } else {
 
         this.image_layer = await this.addLayer({
-          type: "2d-image",
+          type: "itk-vtk",
           name: "example image",
           data: "https://images.proteinatlas.org/19661/221_G2_1_red_green.jpg"
         });
