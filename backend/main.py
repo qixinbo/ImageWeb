@@ -12,7 +12,6 @@ import json
 import numpy as np
 import cv2
 
-
 app = FastAPI()
 
 app.add_middleware(
@@ -68,6 +67,11 @@ def plugins(id):
 
 # https://stackoverflow.com/questions/6375942/how-do-you-base-64-encode-a-png-image-for-use-in-a-data-uri-in-a-css-file
 
+def decode(contents):
+    img = cv2.imdecode(np.fromstring(contents, np.uint8), cv2.IMREAD_COLOR)
+    print("img after cv2 decode = ", img.shape)
+    return img
+
 def process(plugin, img, name):
     exe = imweb.plugin_manager.get(plugin)
 
@@ -82,13 +86,12 @@ def process(plugin, img, name):
 @app.post('/img/')
 async def img(file: UploadFile = File(...), plugin: str = Form(...)):
     contents = await file.read()
-    nparr = np.fromstring(contents, np.uint8)
+    # print("contents = ", contents)
 
-    print("nparr = ", nparr)
+    img = decode(contents)
+    print("img through cv = ", img)
 
     #################### test 1 ########################
-    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-    print("img after cv2 decode = ", img.shape)
 
     # img_dimensions = str(img.shape)
     # return_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)

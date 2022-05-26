@@ -59,8 +59,6 @@ import UPNG from "upng-js/UPNG";
 // 在这里引入itkVtkViewer
 const itkVtkViewer = window.itkVtkViewer;
 
-import ITKHelper from 'vtk.js/Sources/Common/DataModel/ITKHelper';
-
 const CanvasLayer = /*@__PURE__*/ (function(Layer) {
   function CanvasLayer(options) {
     options = options || {};
@@ -409,9 +407,6 @@ export default {
       }
       if (!viewer) throw "Failed to load itk-vtk-viewer";
       this.config.name = this.config.name || this.config.type;
-      console.log("viewer = ", viewer.getImage())
-
-      console.log("haha = ", ITKHelper.convertVtkToItkImage(viewer.getImage()))
 
       const viewProxy = viewer.getViewProxy();
       const renderWindow = viewProxy.getRenderWindow();

@@ -1,0 +1,50 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=2"
+    />
+    <title>ImJoy Simple App Example</title>
+  </head>
+
+  <body>
+    <div id="window-container"></div>
+    <div id="menu-container"></div>
+    <script src="/imjoy-loader.js"></script>
+    <script>
+      loadImJoyBasicApp({
+        base_url: "/",
+        debug: true,
+        process_url_query: true,
+        show_window_title: true,
+        show_progress_bar: true,
+        show_empty_window: true,
+        hide_about_imjoy: false,
+        menu_style: { position: "absolute", right: 0, top: 0, zIndex: 999 },
+        window_style: { width: "100%", height: "100%" },
+        main_container: null,
+        menu_container: "menu-container",
+        window_manager_container: "window-container",
+        imjoy_api: {},
+      }).then(async app => {
+        const api = app.imjoy.api;
+        app.addMenuItem({
+          label: "➕ Load Plugin",
+          callback() {
+            const uri = prompt(
+              `Please type a ImJoy plugin URL`,
+              "https://github.com/imjoy-team/imjoy-plugins/blob/master/repository/ImageAnnotator.imjoy.html"
+            );
+            if (uri) app.loadPlugin(uri);
+          },
+        });
+        const kaibu = await api.createWindow({
+          src: "http://localhost:8080/#/",
+          fullscreen: true,
+        });
+      });
+    </script>
+  </body>
+</html>

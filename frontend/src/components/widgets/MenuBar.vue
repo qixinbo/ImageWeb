@@ -40,6 +40,23 @@
 import axios from 'axios';
 import Static from "ol/source/ImageStatic";
 import Projection from "ol/proj/Projection";
+
+import ITKHelper from '@kitware/vtk.js/Common/DataModel/ITKHelper';
+import {encode} from 'uint8-to-base64';
+
+import Base64 from '@kitware/vtk.js/Common/Core/Base64';
+
+// import * as imjoyCore from 'imjoy-core'
+// const imjoy = new imjoyCore.ImJoy({
+//     imjoy_api: {},
+//     //imjoy config
+// });
+
+// imjoy.start({workspace: 'default'}).then(async ()=>{
+//     await imjoy.api.alert("hello world");
+//   }
+// )
+
 // https://gist.github.com/ibreathebsb/a104a9297d5df4c8ae944a4ed149bcf1
 // helper function: generate a new file from base64 String
 const dataURLtoFile = (dataurl, filename) => {
@@ -65,6 +82,9 @@ export default {
     }
   },
   mounted(){
+
+
+
     axios
       .get('http://localhost:5000/menu/')
       .then(response => {
@@ -73,6 +93,9 @@ export default {
       .catch(function (error) { // 请求失败处理
         console.log(error);
       });
+
+
+
   },
   methods: {
     handleSelect(key, keyPath) {
@@ -83,11 +106,29 @@ export default {
 
       const layer = this.$store.state.layers[this.$store.state.currentLayer.id]
 
-      const dataURL = layer.getSource().getUrl()
-      const file = dataURLtoFile(dataURL)
+      const itkImage = ITKHelper.convertVtkToItkImage(layer.getLayerAPI().get_image())
+      console.log("itkImage = ", itkImage)
+
+      const vtkImage = layer.getLayerAPI().get_image()
+      console.log('vtkImage = ', vtkImage)
+
+      // console.log("Base64 = ", Base64)
+      // console.log("b641 = ", Base64.fromArrayBuffer(itkImage.data))
+      // const utf8Binary = new Uint8Array(anyArrayBuffer);
+       
+      // // encode converts Uint8Array instances to utf-16 strings
+      const encoded_b64 = 'data:image/png;base64,' + encode(itkImage.data);
+
+      // console.log("b64 = ", encoded_b64)
+
+
+      // const dataURL = layer.getSource().getUrl()
+      // const file = dataURLtoFile(dataURL)
+
+      const file = dataURLtoFile(encoded_b64)
       // put file into form data
       const data = new FormData()
-      data.append('file', file, file.name)
+      data.append('file', file, 'itk-vtk')
       data.append('plugin', key)
 
       // now upload

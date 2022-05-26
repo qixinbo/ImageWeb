@@ -540,12 +540,19 @@ export default {
           updateSlider: this.updateSlider,
           openSidebar: this.openSidebar
         });
+        this.image_layer = await this.addLayer({
+          type: "itk-vtk",
+          name: "example image",
+          // data: "https://images.proteinatlas.org/19661/221_G2_1_red_green.jpg"
+          data: "/static/img/221-G2-1-red-green.jpg"
+        });
       } else {
 
         this.image_layer = await this.addLayer({
           type: "itk-vtk",
           name: "example image",
-          data: "https://images.proteinatlas.org/19661/221_G2_1_red_green.jpg"
+          // data: "https://images.proteinatlas.org/19661/221_G2_1_red_green.jpg"
+          data: "/static/img/221-G2-1-red-green.jpg"
         });
 
         // this.shape_layer = await this.addLayer({
