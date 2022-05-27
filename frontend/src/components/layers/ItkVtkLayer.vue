@@ -382,7 +382,7 @@ export default {
           this.$emit("loading", true);
           const cfg = await itkVtkViewer.utils.readFiles({ files: files });
           console.log("cfg = ", cfg.image)
-          
+
 
           cfg.uiContainer = document.getElementById("toolbar");
           is2D = cfg.use2D;

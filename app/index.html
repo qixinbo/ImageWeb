@@ -16,7 +16,7 @@
     <script>
       loadImJoyBasicApp({
         base_url: "/",
-        debug: true,
+        // debug: true,
         process_url_query: true,
         show_window_title: true,
         show_progress_bar: true,
@@ -40,10 +40,40 @@
             if (uri) app.loadPlugin(uri);
           },
         });
-        const kaibu = await api.createWindow({
+        const viewer = await api.createWindow({
           src: "http://localhost:8080/#/",
           fullscreen: true,
         });
+        await viewer.view_image("https://raw.githubusercontent.com/dasoto/skincancer/master/images/test.png", {
+          name: "skin image"
+        })
+        await viewer.add_shapes([],{name: "ROI"})
+        await viewer.add_widget({
+          "_rintf": true,
+          "name": "Labels",
+          "type": "form",
+          "form_submit_callback": function (values) {
+            api.showMessage(JSON.stringify(values))
+          },
+          "fields": [{
+            "label": "Skin Cancer Type",
+            "type": "radio",
+            "items": [{
+                "text": "Normal",
+                "value": "Normal",
+                "checked": true
+              },
+              "Melanoma",
+              "Squamous cell carcinoma"
+            ]
+            },
+            {
+              "label": "Comment",
+              "placeholder": "",
+              "isRequired": false
+          }],
+        })
+    
       });
     </script>
   </body>
