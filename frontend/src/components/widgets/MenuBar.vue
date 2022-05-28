@@ -106,26 +106,27 @@ export default {
 
       const layer = this.$store.state.layers[this.$store.state.currentLayer.id]
 
-      const itkImage = ITKHelper.convertVtkToItkImage(layer.getLayerAPI().get_image())
-      console.log("itkImage = ", itkImage)
+      // ////////////////////   codes for itk-vtk-viewer //////////////
+      // const itkImage = ITKHelper.convertVtkToItkImage(layer.getLayerAPI().get_image())
+      // console.log("itkImage = ", itkImage)
 
-      const vtkImage = layer.getLayerAPI().get_image()
-      console.log('vtkImage = ', vtkImage)
+      // const vtkImage = layer.getLayerAPI().get_image()
+      // console.log('vtkImage = ', vtkImage)
 
       // console.log("Base64 = ", Base64)
       // console.log("b641 = ", Base64.fromArrayBuffer(itkImage.data))
       // const utf8Binary = new Uint8Array(anyArrayBuffer);
        
       // // encode converts Uint8Array instances to utf-16 strings
-      const encoded_b64 = 'data:image/png;base64,' + encode(itkImage.data);
+      // const encoded_b64 = 'data:image/png;base64,' + encode(itkImage.data);
 
       // console.log("b64 = ", encoded_b64)
+      // const file = dataURLtoFile(encoded_b64)
+      // ////////////////////   end for itk-vtk-viewer //////////////
 
+      const dataURL = layer.getSource().getUrl()
+      const file = dataURLtoFile(dataURL)
 
-      // const dataURL = layer.getSource().getUrl()
-      // const file = dataURLtoFile(dataURL)
-
-      const file = dataURLtoFile(encoded_b64)
       // put file into form data
       const data = new FormData()
       data.append('file', file, 'itk-vtk')
@@ -170,7 +171,8 @@ export default {
 
         })
         .catch(error => {
-            console.error(error);
+            console.error('---------', error.response.data);
+            // alert(error)
         });
 
 
