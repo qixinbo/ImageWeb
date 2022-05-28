@@ -6,7 +6,7 @@ class Free:
     view = None
     para = None
     prgs = None
-    asyn = True
+    asyn = False
 
     def progress(self, i, n): self.prgs = int(i*100/n)
 

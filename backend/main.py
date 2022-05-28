@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Form, File, UploadFile
+from fastapi import FastAPI, Form, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
@@ -67,29 +67,29 @@ def plugins(id):
 
 # https://stackoverflow.com/questions/6375942/how-do-you-base-64-encode-a-png-image-for-use-in-a-data-uri-in-a-css-file
 
-def decode(contents):
-    img = cv2.imdecode(np.fromstring(contents, np.uint8), cv2.IMREAD_COLOR)
-    print("img after cv2 decode = ", img.shape)
-    return img
 
-def process(plugin, img, name):
-    exe = imweb.plugin_manager.get(plugin)
-
-    imgPlus = Image([img])
-    print('img2 = ', imgPlus.img.shape)
-    imweb.show_img(imgPlus, name)
-
-    exe().start(imweb)
-    processed_img = imgPlus.img
-    return processed_img
+imgPlus = None
 
 @app.post('/img/')
 async def img(file: UploadFile = File(...), plugin: str = Form(...)):
     contents = await file.read()
-    # print("contents = ", contents)
+    img = cv2.imdecode(np.fromstring(contents, np.uint8), cv2.IMREAD_COLOR)
+    print("img after cv2 decode = ", img.shape)
+    # print("img through cv = ", img)
 
-    img = decode(contents)
-    print("img through cv = ", img)
+    global imgPlus
+
+    if None == imgPlus:
+        imgPlus = Image([img])
+        print('img2 = ', imgPlus.img.shape)
+        imweb.show_img(imgPlus, file.filename)
+
+    print('img2 out = ', imgPlus.img.shape)
+
+    exe = imweb.plugin_manager.get(plugin)
+    exe().start(imweb)
+    processed_img = imgPlus.img
+    print("processed_img = ", processed_img.shape)
 
     #################### test 1 ########################
 
@@ -99,12 +99,12 @@ async def img(file: UploadFile = File(...), plugin: str = Form(...)):
     # return_img = img
     #################### end of test 1 ########################
 
-    processed_img = process(plugin, img, file.filename)
-
     _, encoded_img = cv2.imencode('.PNG', processed_img)
 
     encoded_img = base64.b64encode(encoded_img).decode('ascii')
 
+    # handling error
+    # raise HTTPException(status_code=404, detail="Item 222 not found")
 
     return {
         'filename': file.filename,

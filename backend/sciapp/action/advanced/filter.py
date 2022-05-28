@@ -80,7 +80,7 @@ def process_stack(plg, ips, src, imgs, para, callafter=None):
 class Filter:
     title = 'Filter'
     modal = True
-    asyn = True
+    asyn = False
     note = []
     'all, 8-bit, 16-bit, int, rgb, float, not_channel, not_slice, req_roi, auto_snap, auto_msk, preview, 2int, 2float'
     para = None
