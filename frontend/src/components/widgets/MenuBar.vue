@@ -171,8 +171,8 @@ export default {
 
         })
         .catch(error => {
-            console.error('---------', error.response.data);
-            // alert(error)
+            // console.error('---------', error.response.data);
+            alert(error.response.data.detail)
         });
 
 

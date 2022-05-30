@@ -86,6 +86,8 @@ class ImageWeb(App):
         tasks = [(p.title, lambda t=p:p.prgs) for n,p,t in tasks]
         # self.pro_bar.SetValue(tasks)
 
+    def alert(self, cont, title='ImagePy'):
+        raise Exception(cont)
 
     def translate(self, dic):
         dic = dic or {}

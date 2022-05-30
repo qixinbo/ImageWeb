@@ -87,31 +87,35 @@ async def img(file: UploadFile = File(...), plugin: str = Form(...)):
     print('img2 out = ', imgPlus.img.shape)
 
     exe = imweb.plugin_manager.get(plugin)
-    exe().start(imweb)
-    processed_img = imgPlus.img
-    print("processed_img = ", processed_img.shape)
+    try:
+        exe().start(imweb)
 
-    #################### test 1 ########################
+        processed_img = imgPlus.img
+        print("processed_img = ", processed_img.shape)
 
-    # img_dimensions = str(img.shape)
-    # return_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    # return_img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
-    # return_img = img
-    #################### end of test 1 ########################
+        #################### test 1 ########################
 
-    _, encoded_img = cv2.imencode('.PNG', processed_img)
+        # img_dimensions = str(img.shape)
+        # return_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        # return_img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+        # return_img = img
+        #################### end of test 1 ########################
 
-    encoded_img = base64.b64encode(encoded_img).decode('ascii')
+        _, encoded_img = cv2.imencode('.PNG', processed_img)
+
+        encoded_img = base64.b64encode(encoded_img).decode('ascii')
+
+
+        return {
+            'filename': file.filename,
+            'dimensions': {
+                'height': processed_img.shape[0],
+                'width': processed_img.shape[1],
+                'channels': 1 if processed_img.ndim==2 else processed_img.shape[2]
+            },
+            'encoded_img': 'data:image/png;base64,{}'.format(encoded_img),
+        }
 
     # handling error
-    # raise HTTPException(status_code=404, detail="Item 222 not found")
-
-    return {
-        'filename': file.filename,
-        'dimensions': {
-            'height': processed_img.shape[0],
-            'width': processed_img.shape[1],
-            'channels': 1 if processed_img.ndim==2 else processed_img.shape[2]
-        },
-        'encoded_img': 'data:image/png;base64,{}'.format(encoded_img),
-    }
+    except Exception as e:
+        raise HTTPException(status_code=404, detail=str(e))
