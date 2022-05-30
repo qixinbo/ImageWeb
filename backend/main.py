@@ -54,7 +54,12 @@ def menu():
 @app.get('/plugins/')
 def plugins(id):
     exe = imweb.plugin_manager.get(id)
-    return "hello world"
+    print("view = ", exe().view)
+    dialog = []
+    for i in exe().view:
+        dialog.append(i[1:])
+    print("dialog = ", dialog)
+    return dialog
 
 
 # refs:
@@ -88,7 +93,8 @@ async def img(file: UploadFile = File(...), plugin: str = Form(...)):
 
     exe = imweb.plugin_manager.get(plugin)
     try:
-        exe().start(imweb)
+        para = {'sigma':20}
+        exe().start(imweb, para)
 
         processed_img = imgPlus.img
         print("processed_img = ", processed_img.shape)
@@ -117,5 +123,7 @@ async def img(file: UploadFile = File(...), plugin: str = Form(...)):
         }
 
     # handling error
+    # https://www.runoob.com/python/python-exceptions.html
+    # https://fastapi.tiangolo.com/tutorial/handling-errors/#re-use-fastapis-exception-handlers
     except Exception as e:
         raise HTTPException(status_code=404, detail=str(e))

@@ -3,12 +3,11 @@
  <!-- 对应data_v1 -->
 <!--  <div>
    <h1>{{value2}}</h1>
- </div>
+ </div> -->
  <div>
    <h1>{{value}}</h1>
-   <h1>{{value3}}</h1>
  </div>
- --> 
+ 
  <el-menu class="el-menu-demo" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" 
     mode="horizontal" @select="handleSelect">
     <el-submenu v-for='m1 in value2' :index="m1[0]" :key='m1[0]'>
@@ -78,7 +77,6 @@ export default {
     return {
       value: 123,
       value2: 'change after clicked',
-      value3: 456,
     }
   },
   mounted(){
