@@ -17,9 +17,20 @@ class OpenFile(dataio.Reader):
 
 class OpenUrl(Free):
     title = 'Open Url'
-    para = {'url':'http://data.imagepy.org/testdata/yxdragon.jpg'}
-    view = [('lab', None, 'Input the URL, eg. http://data.imagepy.org/testdata/yxdragon.jpg'),
-            (str, 'url', 'Url', '')]
+    # para = {'url':'http://data.imagepy.org/testdata/yxdragon.jpg'}
+    # view = [('lab', None, 'Input the URL, eg. http://data.imagepy.org/testdata/yxdragon.jpg'),
+    #         (str, 'url', 'Url', '')]
+
+    para = {'name':'yxdragon', 'age':10, 'h':1.72, 'w':70, 'sport':True, 'sys':'Mac', 'lan':['C/C++', 'Python'], 'c':(255,0,0), 'path': ' '}
+
+    view = [('lab', 'lab', 'This is a questionnaire'),
+            (str, 'name', 'name', 'please'),
+            (int, 'age', (0,150), 0, 'age', 'years old'),
+            (float, 'h', (0.3, 2.5), 2, 'height', 'm'),
+            ('slide', 'w', (1, 150), 0, 'weight','kg'),
+            (bool, 'sport', 'do you like sport'),
+            ('chos', 'lan', ['C/C++','Java','Python'], 'lanuage you like(multi)')
+            ]
     
     def run(self, para = None):
         try:

@@ -55,15 +55,16 @@ def menu():
 def plugins(id):
     exe = imweb.plugin_manager.get(id)
     print("view = ", exe().view)
-    dialog = []
+    print("para = ", exe().para)
+    view = []
     for i in exe().view:
         if type(i[0]) == type:
-            dialog.append((i[0].__name__, i[1:]))
+            view.append((i[0].__name__, i[1:]))
         else:
-            dialog.append((i[0], i[1:]))
+            view.append((i[0], i[1:]))
 
-    print("dialog = ", dialog)
-    return dialog
+    print("dialog = ", view)
+    return view, exe().para
 
 
 # refs:

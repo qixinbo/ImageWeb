@@ -2,15 +2,16 @@
 <div>
  <!-- 对应data_v1 -->
 <!--  <div>
-   <h1>{{value2}}</h1>
+   <h1>{{menu}}</h1>
  </div> -->
  <div>
-   <h1>{{value}}</h1>
+   <h1>{{view}}</h1>
+   <h1>{{para}}</h1>
  </div>
  
  <el-menu class="el-menu-demo" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" 
     mode="horizontal" @select="handleSelect">
-    <el-submenu v-for='m1 in value2' :index="m1[0]" :key='m1[0]'>
+    <el-submenu v-for='m1 in menu' :index="m1[0]" :key='m1[0]'>
       <template slot="title">{{m1[0]}}</template>
       <div v-for='m2 in m1[1]' :key='m2[0]'>
         <el-menu-item v-if='!(m2[1] instanceof Array)' :index="m2[0]" :key='m2[0]'>
@@ -34,7 +35,7 @@
       title="参数对话框"
       :visible.sync="dialogVisible"
       width="40%">
-      <ParaDialog :paradialog="value"/>
+      <ParaDialog :view="view" :para="para"/>
     </el-dialog>
 
   </el-menu>
@@ -88,8 +89,9 @@ export default {
   },
   data() {
     return {
-      value: 123,
-      value2: 'change after clicked',
+      view: 123,
+      para: [],
+      menu: 'change after clicked',
       dialogVisible: false
     }
   },
@@ -98,7 +100,7 @@ export default {
     axios
       .get('http://localhost:5000/menu/')
       .then(response => {
-        this.value2 = response.data
+        this.menu = response.data
       })
       .catch(function (error) { // 请求失败处理
         console.log(error);
@@ -193,7 +195,8 @@ export default {
         })
         .then(response => 
           {
-            this.value = response.data;
+            this.view = response.data[0];
+            this.para = response.data[1];
             this.dialogVisible = true 
           }
           )
