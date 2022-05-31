@@ -29,6 +29,14 @@
         </el-submenu>      
       </div>
     </el-submenu>
+
+    <el-dialog
+      title="参数对话框"
+      :visible.sync="dialogVisible"
+      width="40%">
+      <ParaDialog :paradialog="value"/>
+    </el-dialog>
+
   </el-menu>
 </div>
 </template>
@@ -44,6 +52,8 @@ import ITKHelper from '@kitware/vtk.js/Common/DataModel/ITKHelper';
 import {encode} from 'uint8-to-base64';
 
 import Base64 from '@kitware/vtk.js/Common/Core/Base64';
+
+import ParaDialog from "./ParaDialogWidget"
 
 // import * as imjoyCore from 'imjoy-core'
 // const imjoy = new imjoyCore.ImJoy({
@@ -73,15 +83,17 @@ const dataURLtoFile = (dataurl, filename) => {
 
 export default {
   name: "MenuBar",
+  components: {
+    ParaDialog
+  },
   data() {
     return {
       value: 123,
       value2: 'change after clicked',
+      dialogVisible: false
     }
   },
   mounted(){
-
-
 
     axios
       .get('http://localhost:5000/menu/')
@@ -92,11 +104,12 @@ export default {
         console.log(error);
       });
 
-
-
   },
   methods: {
+
     handleSelect(key, keyPath) {
+
+
       console.log(key, keyPath);
 
       // // generate file from base64 string
@@ -178,7 +191,12 @@ export default {
         .get('http://localhost:5000/plugins/', {
           params:{id: key}
         })
-        .then(response => (this.value = response.data))
+        .then(response => 
+          {
+            this.value = response.data;
+            this.dialogVisible = true 
+          }
+          )
         .catch(function (error) { // 请求失败处理
           console.log(error);
         })      

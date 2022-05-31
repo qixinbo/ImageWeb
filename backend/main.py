@@ -57,7 +57,11 @@ def plugins(id):
     print("view = ", exe().view)
     dialog = []
     for i in exe().view:
-        dialog.append(i[1:])
+        if type(i[0]) == type:
+            dialog.append((i[0].__name__, i[1:]))
+        else:
+            dialog.append((i[0], i[1:]))
+
     print("dialog = ", dialog)
     return dialog
 
