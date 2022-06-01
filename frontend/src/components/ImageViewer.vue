@@ -544,17 +544,17 @@ export default {
           type: "itk-vtk",
           name: "example image",
           // data: "https://images.proteinatlas.org/19661/221_G2_1_red_green.jpg"
-          data: "/static/img/221-G2-1-red-green.jpg"
+          data: "/static/img/logolong.png"
         });
       } else {
 
-        // this.image_layer = await this.addLayer({
-        //   type: "2d-image",
-        //   // type: "itk-vtk",
-        //   name: "example image",
-        //   // data: "https://images.proteinatlas.org/19661/221_G2_1_red_green.jpg"
-        //   data: "/static/img/221-G2-1-red-green.jpg"
-        // });
+        this.image_layer = await this.addLayer({
+          type: "2d-image",
+          // type: "itk-vtk",
+          name: "logo",
+          // data: "https://images.proteinatlas.org/19661/221_G2_1_red_green.jpg"
+          data: "/static/img/logolong.png"
+        });
 
         // this.shape_layer = await this.addLayer({
         //   type: "vector",

@@ -4,10 +4,10 @@
 <!--  <div>
    <h1>{{menu}}</h1>
  </div> -->
- <div>
+<!--  <div>
    <h1>{{view}}</h1>
    <h1>{{para}}</h1>
- </div>
+ </div> -->
  
  <el-menu class="el-menu-demo" background-color="#545c64" text-color="#fff" active-text-color="#ffd04b" 
     mode="horizontal" @select="handleSelect">

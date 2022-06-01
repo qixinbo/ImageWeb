@@ -114,7 +114,8 @@ async def img(
         print("para === ", para)
         exe().start(imweb, para)
 
-        processed_img = imgPlus.img
+        # processed_img = imgPlus.img
+        processed_img = imweb.get_img().img
         print("processed_img = ", processed_img.shape)
 
         #################### test 1 ########################
