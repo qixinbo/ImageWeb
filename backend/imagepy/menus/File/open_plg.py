@@ -29,8 +29,10 @@ class OpenUrl(Free):
             (float, 'h', (0.3, 2.5), 2, 'height', 'm'),
             ('slide', 'w', (1, 150), 0, 'weight','kg'),
             (bool, 'sport', 'do you like sport'),
-            ('chos', 'lan', ['C/C++','Java','Python'], 'lanuage you like(multi)')
-            ]
+            (list, 'sys', ['Windows','Mac','Linux'], str, 'favourite', 'system'),
+            ('chos', 'lan', ['C/C++','Java','Python'], 'lanuage you like(multi)'),
+            ('color', 'c', 'which', 'you like'),
+            ('path', 'path', 'Select the image', ['jpg', 'jpeg', 'png'])]
     
     def run(self, para = None):
         try:

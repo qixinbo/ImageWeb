@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Form, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
+from typing import List
 from pydantic import BaseModel
 
 import imagepy
@@ -11,6 +12,9 @@ import base64
 import json
 import numpy as np
 import cv2
+from PIL import Image as PILImage
+from io import BytesIO
+
 
 app = FastAPI()
 
@@ -54,17 +58,21 @@ def menu():
 @app.get('/plugins/')
 def plugins(id):
     exe = imweb.plugin_manager.get(id)
-    print("view = ", exe().view)
-    print("para = ", exe().para)
-    view = []
-    for i in exe().view:
-        if type(i[0]) == type:
-            view.append((i[0].__name__, i[1:]))
-        else:
-            view.append((i[0], i[1:]))
+    if exe().view:
+        print("view = ", exe().view)
+        view = []
+        for i in exe().view:
+            if i[0] == list:
+                view.append(('list', *i[1:3], i[3].__name__, *i[4:]))
+            elif type(i[0]) == type:
+                view.append((i[0].__name__, *i[1:]))
+            else:
+                view.append((i[0], *i[1:]))
 
-    print("dialog = ", view)
-    return view, exe().para
+        print("dialog = ", view)
+        return view, exe().para
+    else:
+        return None
 
 
 # refs:
@@ -81,11 +89,16 @@ def plugins(id):
 imgPlus = None
 
 @app.post('/img/')
-async def img(file: UploadFile = File(...), plugin: str = Form(...)):
+async def img(
+    file: UploadFile = File(...), 
+    plugin: str = Form(...),
+    para: str  = Form(...)
+    ):
+
     contents = await file.read()
-    img = cv2.imdecode(np.fromstring(contents, np.uint8), cv2.IMREAD_COLOR)
-    print("img after cv2 decode = ", img.shape)
-    # print("img through cv = ", img)
+    pil_img = PILImage.open(BytesIO(contents))
+    img = np.asarray(pil_img)
+    print("img after decoding = ", img.shape)
 
     global imgPlus
 
@@ -98,7 +111,8 @@ async def img(file: UploadFile = File(...), plugin: str = Form(...)):
 
     exe = imweb.plugin_manager.get(plugin)
     try:
-        para = {'sigma':20}
+        para = json.loads(para)
+        print("para === ", para)
         exe().start(imweb, para)
 
         processed_img = imgPlus.img
@@ -112,10 +126,10 @@ async def img(file: UploadFile = File(...), plugin: str = Form(...)):
         # return_img = img
         #################### end of test 1 ########################
 
-        _, encoded_img = cv2.imencode('.PNG', processed_img)
-
-        encoded_img = base64.b64encode(encoded_img).decode('ascii')
-
+        buffered = BytesIO()
+        processed_pil_img = PILImage.fromarray(processed_img)
+        processed_pil_img.save(buffered, format="PNG")
+        encoded_img = base64.b64encode(buffered.getvalue()).decode('ascii')
 
         return {
             'filename': file.filename,

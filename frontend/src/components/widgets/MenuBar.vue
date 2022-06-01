@@ -35,7 +35,44 @@
       title="参数对话框"
       :visible.sync="dialogVisible"
       width="40%">
-      <ParaDialog :view="view" :para="para"/>
+      <el-form ref="form" :model="para" label-width="80px">
+        <el-form-item v-for="p, index in view" :label="p[1]" :key="index">
+          <el-input v-model="para[p[1]]" v-if="p[0]==='str'"></el-input>
+          <el-input v-model.number="para[p[1]]" 
+          v-if="p[0]==='int'" 
+          oninput="value=value.replace(/[^0-9]/g,'')">
+          </el-input>
+
+          <el-input v-model.number="para[p[1]]" v-if="p[0]==='float'"></el-input>
+          <el-slider v-model.number="para[p[1]]" v-if="p[0]==='slide'" :min="p[2][0]" :max="p[2][1]" show-input></el-slider>
+          
+          <el-switch v-model="para[p[1]]" v-if="p[0]==='bool'"
+            active-color="#13ce66"
+            inactive-color="#ff4949">
+          </el-switch>
+
+          <el-select v-model="para[p[1]]" v-if="p[0]==='list'" placeholder="Please choose">
+            <el-option
+              v-for="item in p[2]"
+              :key="item"
+              :label="item"
+              :value="item">
+            </el-option>
+          </el-select>
+
+          <el-checkbox-group v-model="para[p[1]]" v-if="p[0]==='chos'">
+            <el-checkbox 
+              v-for="item in p[2]"
+              :key="item"
+              :label="item">
+            </el-checkbox>
+          </el-checkbox-group>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="onSubmit">Submit</el-button>
+          <el-button @click="onCancel">Cancel</el-button>
+        </el-form-item>
+      </el-form>
     </el-dialog>
 
   </el-menu>
@@ -54,7 +91,6 @@ import {encode} from 'uint8-to-base64';
 
 import Base64 from '@kitware/vtk.js/Common/Core/Base64';
 
-import ParaDialog from "./ParaDialogWidget"
 
 // import * as imjoyCore from 'imjoy-core'
 // const imjoy = new imjoyCore.ImJoy({
@@ -84,15 +120,13 @@ const dataURLtoFile = (dataurl, filename) => {
 
 export default {
   name: "MenuBar",
-  components: {
-    ParaDialog
-  },
   data() {
     return {
-      view: 123,
-      para: [],
+      view: [],
+      para: null,
       menu: 'change after clicked',
-      dialogVisible: false
+      dialogVisible: false,
+      currentKey: null
     }
   },
   mounted(){
@@ -109,15 +143,12 @@ export default {
   },
   methods: {
 
-    handleSelect(key, keyPath) {
-
-
-      console.log(key, keyPath);
-
+    axios_img(key, para){
       // // generate file from base64 string
       // const file = dataURLtoFile('data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUA    AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==', 'myfile')
 
       const layer = this.$store.state.layers[this.$store.state.currentLayer.id]
+      // console.log("layer = ", layer)
 
       // ////////////////////   codes for itk-vtk-viewer //////////////
       // const itkImage = ITKHelper.convertVtkToItkImage(layer.getLayerAPI().get_image())
@@ -144,6 +175,7 @@ export default {
       const data = new FormData()
       data.append('file', file, 'itk-vtk')
       data.append('plugin', key)
+      data.append('para', para)
 
       // now upload
       const config = {
@@ -187,7 +219,11 @@ export default {
             // console.error('---------', error.response.data);
             alert(error.response.data.detail)
         });
+    },
 
+    handleSelect(key, keyPath) {
+      console.log(key, keyPath);
+      this.currentKey = key
 
       axios
         .get('http://localhost:5000/plugins/', {
@@ -195,14 +231,33 @@ export default {
         })
         .then(response => 
           {
-            this.view = response.data[0];
-            this.para = response.data[1];
-            this.dialogVisible = true 
+            console.log('response = ', response)
+            if (response.data)
+            {
+              this.view = response.data[0];
+              this.para = response.data[1];
+              this.dialogVisible = true;
+            }
+            else
+            {
+              this.para = null
+              this.axios_img(key, JSON.stringify(this.para))
+            }
+            console.log("para222 ---- = ", JSON.stringify(this.para))
           }
           )
         .catch(function (error) { // 请求失败处理
-          console.log(error);
+          console.log(error.response.data);
         })      
+    },
+    onSubmit() {
+      console.log('submit!');
+      console.log('999999 = ', this.para)
+      this.axios_img(this.currentKey, JSON.stringify(this.para))
+      this.dialogVisible = false
+    },
+    onCancel() {
+      this.dialogVisible = false
     }
   }
 };

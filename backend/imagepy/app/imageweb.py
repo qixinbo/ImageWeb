@@ -89,18 +89,6 @@ class ImageWeb(App):
     def alert(self, cont, title='ImagePy'):
         raise Exception(cont)
 
-    def show_para(self, title, para, view, on_handle=None, on_ok=None, 
-        on_cancel=None, on_help=None, preview=False, modal=True):
-        for i in view:
-            if i[0]==str: para[i[1]] = input(i[2]+': ? '+i[3]+' <str> ')
-            if i[0]==int: para[i[1]] = int(input(i[4]+': ? '+i[5]+' <int> '))
-            if i[0]==float: para[i[1]] = float(input(i[4]+': ? '+i[5]+' <float> '))
-            if i[0]=='slide': para[i[1]] = float(input(i[4]+': ? <float> '))
-            if i[0]==bool: para[i[1]] = bool(input(i[2]+': <True/False> '))
-            if i[0]==list: para[i[1]] = i[3](input('%s %s: %s'%(i[4],i[5],i[2])+' <single choice> '))
-            if i[0]=='chos':para[i[1]] = input('%s:%s <multi choices> '%(i[3],i[2])).split(',')
-            if i[0]=='color': para[i[1]] = eval(input(i[2]+': ? '+i[3]+' <rgb> '))
-        return para
 
     def translate(self, dic):
         dic = dic or {}
