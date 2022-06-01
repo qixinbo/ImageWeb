@@ -102,10 +102,9 @@ async def img(
 
     global imgPlus
 
-    if None == imgPlus:
-        imgPlus = Image([img])
-        print('img2 = ', imgPlus.img.shape)
-        imweb.show_img(imgPlus, file.filename)
+    imgPlus = Image([img])
+    print('img2 = ', imgPlus.img.shape)
+    imweb.show_img(imgPlus, file.filename)
 
     print('img2 out = ', imgPlus.img.shape)
 
