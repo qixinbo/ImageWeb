@@ -547,24 +547,17 @@ export default {
           data: "/static/img/logolong.png"
         });
       } else {
-
         this.image_layer = await this.addLayer({
           type: "2d-image",
           // type: "itk-vtk",
-          name: "logo",
+          name: "Image Layer",
           // data: "https://images.proteinatlas.org/19661/221_G2_1_red_green.jpg"
           data: "/static/img/logolong.png"
         });
-
-        // this.shape_layer = await this.addLayer({
-        //   type: "vector",
-        //   name: "shape vectors",
-        //   data:
-        //     "https://gist.githubusercontent.com/oeway/7c62128939a7f9b1701e2bbd72b809dc/raw/example_shape_vectors.json",
-        //   predefined_tags: ["nuclei", "cell"],
-        //   only_predefined_tags: true,
-        //   single_tag_mode: false
-        // });
+        this.shape_layer = await this.addLayer({
+          type: "vector",
+          name: "ROI Layer",
+        });
         // console.log("store.state = ", this.$store.state)
         // console.log(this.$store.state.currentLayer)
         // console.log('!!!', this.image_layer.getSource().getUrl())

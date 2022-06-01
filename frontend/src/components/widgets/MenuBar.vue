@@ -85,6 +85,7 @@
 import axios from 'axios';
 import Static from "ol/source/ImageStatic";
 import Projection from "ol/proj/Projection";
+import ImageLayer from "ol/layer/Image";
 
 import ITKHelper from '@kitware/vtk.js/Common/DataModel/ITKHelper';
 import {encode} from 'uint8-to-base64';
@@ -147,8 +148,14 @@ export default {
       // // generate file from base64 string
       // const file = dataURLtoFile('data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUA    AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==', 'myfile')
 
-      const layer = this.$store.state.layers[this.$store.state.currentLayer.id]
-      // console.log("layer = ", layer)
+      // 只有图形层时使用
+      // const layer = this.$store.state.layers[this.$store.state.currentLayer.id];
+
+      const layers = this.$store.state.layers;
+      console.log("this.$store.state.layers = ", layers)
+
+      const imagelayer_id = Object.keys(layers).filter(k => layers[k] instanceof ImageLayer);
+      const layer = layers[imagelayer_id];
 
       // ////////////////////   codes for itk-vtk-viewer //////////////
       // const itkImage = ITKHelper.convertVtkToItkImage(layer.getLayerAPI().get_image())
