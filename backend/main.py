@@ -118,7 +118,7 @@ async def img(
         processed_imgPlus = imweb.get_img()
         processed_img = processed_imgPlus.img
         print("processed_img = ", processed_img.shape)
-        print("roi = ", processed_imgPlus.roi)
+        print("roi = ", processed_imgPlus.roi.to_json())
 
         #################### test 1 ########################
 
@@ -141,6 +141,7 @@ async def img(
                 'channels': 1 if processed_img.ndim==2 else processed_img.shape[2]
             },
             'encoded_img': 'data:image/png;base64,{}'.format(encoded_img),
+            'roi': processed_imgPlus.roi.to_json()
         }
 
     # handling error

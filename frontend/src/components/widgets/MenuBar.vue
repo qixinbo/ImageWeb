@@ -86,6 +86,7 @@ import axios from 'axios';
 import Static from "ol/source/ImageStatic";
 import Projection from "ol/proj/Projection";
 import ImageLayer from "ol/layer/Image";
+import VectorLayer from "ol/layer/Vector";
 
 import ITKHelper from '@kitware/vtk.js/Common/DataModel/ITKHelper';
 import {encode} from 'uint8-to-base64';
@@ -154,16 +155,17 @@ export default {
       const layers = this.$store.state.layers;
       console.log("this.$store.state.layers = ", layers)
 
-      const imagelayer_id = Object.keys(layers).filter(k => layers[k] instanceof ImageLayer);
+      const imagelayer_id = Object.keys(layers).filter(k => layers[k] instanceof ImageLayer).slice(-1)[0];
 
       if (imagelayer_id.length > 1)
       {
-        alert("当前不支持多个Image Layers，请删掉其他Image Layers，仅保留一个。\n-------------多个Layers的功能正在开发中-------------")
+        // alert("当前不支持多个Image Layers，请删掉其他Image Layers，仅保留一个。\n-------------多个Layers的功能正在开发中-------------")
       }
 
-      // console.log("imagelayer id = ", imagelayer_id)
+      console.log("imagelayer id = ", imagelayer_id)
 
-      const layer = layers[imagelayer_id];
+      const image_layer = layers[imagelayer_id];
+
 
       // ////////////////////   codes for itk-vtk-viewer //////////////
       // const itkImage = ITKHelper.convertVtkToItkImage(layer.getLayerAPI().get_image())
@@ -183,7 +185,7 @@ export default {
       // const file = dataURLtoFile(encoded_b64)
       // ////////////////////   end for itk-vtk-viewer //////////////
 
-      const dataURL = layer.getSource().getUrl()
+      const dataURL = image_layer.getSource().getUrl()
       const file = dataURLtoFile(dataURL)
 
       // put file into form data
@@ -225,9 +227,22 @@ export default {
             imageExtent: extent
           });
 
-          layer.setSource(image_source)
+          image_layer.setSource(image_source)
 
           // console.log("new url", layer.getSource().getUrl())
+
+
+          const vectorlayer_id = Object.keys(layers).filter(k => layers[k] instanceof VectorLayer).slice(-1)[0];
+
+          const vector_layer = layers[vectorlayer_id];
+
+          const feature = {"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[60.2,80.5]},"properties":{"label":null,"size":7,"edge_color":"#0BF737","edge_width":2,"face_color":"#FFFFFF0F","id":"b18e3db6-2461-4b4d-bead-95a7638431f6"},"id":"b18e3db6-2461-4b4d-bead-95a7638431f6"},{"type":"Feature","geometry":{"type":"Point","coordinates":[57.7,55.2]},"properties":{"label":null,"size":7,"edge_color":"#0BF737","edge_width":2,"face_color":"#FFFFFF0F","id":"39ddf2a3-a4ef-44f8-8d24-c3d655fc2488"},"id":"39ddf2a3-a4ef-44f8-8d24-c3d655fc2488"}]}
+          vector_layer.getLayerAPI().set_features(feature)
+
+          console.log("roi = ", vector_layer.getLayerAPI().get_features())
+          console.log("roi returned = ", response.data.roi)
+
+
 
         })
         .catch(error => {
