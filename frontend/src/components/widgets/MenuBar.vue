@@ -155,6 +155,14 @@ export default {
       console.log("this.$store.state.layers = ", layers)
 
       const imagelayer_id = Object.keys(layers).filter(k => layers[k] instanceof ImageLayer);
+
+      if (imagelayer_id.length > 1)
+      {
+        alert("当前不支持多个Image Layers，请删掉其他Image Layers，仅保留一个。\n-------------多个Layers的功能正在开发中-------------")
+      }
+
+      // console.log("imagelayer id = ", imagelayer_id)
+
       const layer = layers[imagelayer_id];
 
       // ////////////////////   codes for itk-vtk-viewer //////////////

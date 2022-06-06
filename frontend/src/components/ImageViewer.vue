@@ -557,6 +557,7 @@ export default {
         this.shape_layer = await this.addLayer({
           type: "vector",
           name: "ROI Layer",
+          // data: "https://gist.githubusercontent.com/oeway/7c62128939a7f9b1701e2bbd72b809dc/raw/example_shape_vectors.json",
         });
         // console.log("store.state = ", this.$store.state)
         // console.log(this.$store.state.currentLayer)

@@ -115,8 +115,10 @@ async def img(
         exe().start(imweb, para)
 
         # processed_img = imgPlus.img
-        processed_img = imweb.get_img().img
+        processed_imgPlus = imweb.get_img()
+        processed_img = processed_imgPlus.img
         print("processed_img = ", processed_img.shape)
+        print("roi = ", processed_imgPlus.roi)
 
         #################### test 1 ########################
 
