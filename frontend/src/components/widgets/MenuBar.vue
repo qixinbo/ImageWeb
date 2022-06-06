@@ -236,10 +236,13 @@ export default {
 
           const vector_layer = layers[vectorlayer_id];
 
-          const feature = {"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[60.2,80.5]},"properties":{"label":null,"size":7,"edge_color":"#0BF737","edge_width":2,"face_color":"#FFFFFF0F","id":"b18e3db6-2461-4b4d-bead-95a7638431f6"},"id":"b18e3db6-2461-4b4d-bead-95a7638431f6"},{"type":"Feature","geometry":{"type":"Point","coordinates":[57.7,55.2]},"properties":{"label":null,"size":7,"edge_color":"#0BF737","edge_width":2,"face_color":"#FFFFFF0F","id":"39ddf2a3-a4ef-44f8-8d24-c3d655fc2488"},"id":"39ddf2a3-a4ef-44f8-8d24-c3d655fc2488"}]}
-          vector_layer.getLayerAPI().set_features(feature)
+          const feature = {"features": [{"geometry": {"geometries": [{"coordinates": [[1.0, 73.0, 22.0], [1.0, 134.0, 53.0], [1.0, 179.0, 71.0], [1.0, 413.0, 133.0], [1.0, 251.0, 135.0], [1.0, 557.0, 138.0], [1.0, 492.0, 142.0], [1.0, 140.0, 147.0], [1.0, 50.0, 162.0], [1.0, 38.0, 168.0], [1.0, 190.0, 172.0], [1.0, 144.0, 190.0], [1.0, 77.0, 199.0], [1.0, 42.0, 213.0], [1.0, 175.0, 216.0]], "type": "MultiPoint"}], "type": "GeometryCollection"}, "properties": {}, "type": "Feature"}], "type": "FeatureCollection"}
 
-          console.log("roi = ", vector_layer.getLayerAPI().get_features())
+          // {'type': 'GeometryCollection', 'geometries': [{'type': 'MultiPoint', 'coordinates': ((1.0, 73.0, 22.0), (1.0, 134.0, 53.0), (1.0, 179.0, 71.0), (1.0, 413.0, 133.0), (1.0, 251.0, 135.0), (1.0, 557.0, 138.0), (1.0, 492.0, 142.0), (1.0, 140.0, 147.0), (1.0, 50.0, 162.0), (1.0, 38.0, 168.0), (1.0, 190.0, 172.0), (1.0, 144.0, 190.0), (1.0, 77.0, 199.0), (1.0, 42.0, 213.0), (1.0, 175.0, 216.0))}]};
+
+          vector_layer.getLayerAPI().set_features(feature);
+
+          console.log("roi = ", vector_layer.getLayerAPI().get_features());
           console.log("roi returned = ", response.data.roi)
 
 

@@ -117,8 +117,15 @@ async def img(
         # processed_img = imgPlus.img
         processed_imgPlus = imweb.get_img()
         processed_img = processed_imgPlus.img
+        roi = processed_imgPlus.roi
         print("processed_img = ", processed_img.shape)
-        print("roi = ", processed_imgPlus.roi.to_json())
+
+
+        geom = {'type': 'GeometryCollection', 'geometries': [{'type': 'MultiPoint', 'coordinates': ((1.0, 73.0, 22.0), (1.0, 134.0, 53.0), (1.0, 179.0, 71.0), (1.0, 413.0, 133.0), (1.0, 251.0, 135.0), (1.0, 557.0, 138.0), (1.0, 492.0, 142.0), (1.0, 140.0, 147.0), (1.0, 50.0, 162.0), (1.0, 38.0, 168.0), (1.0, 190.0, 172.0), (1.0, 144.0, 190.0), (1.0, 77.0, 199.0), (1.0, 42.0, 213.0), (1.0, 175.0, 216.0))}]}
+        from geojson import Feature, FeatureCollection
+        feature = Feature(geometry=geom)
+        my_feature = FeatureCollection([feature])
+        print("feature = ", my_feature)
 
         #################### test 1 ########################
 
@@ -141,7 +148,7 @@ async def img(
                 'channels': 1 if processed_img.ndim==2 else processed_img.shape[2]
             },
             'encoded_img': 'data:image/png;base64,{}'.format(encoded_img),
-            'roi': processed_imgPlus.roi.to_json()
+            'roi': roi.to_json() if roi else None
         }
 
     # handling error
