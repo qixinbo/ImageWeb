@@ -236,17 +236,16 @@ export default {
 
           const vector_layer = layers[vectorlayer_id];
 
-          const feature = {"features": [{"geometry": {"geometries": [{"coordinates": [[1.0, 73.0, 22.0], [1.0, 134.0, 53.0], [1.0, 179.0, 71.0], [1.0, 413.0, 133.0], [1.0, 251.0, 135.0], [1.0, 557.0, 138.0], [1.0, 492.0, 142.0], [1.0, 140.0, 147.0], [1.0, 50.0, 162.0], [1.0, 38.0, 168.0], [1.0, 190.0, 172.0], [1.0, 144.0, 190.0], [1.0, 77.0, 199.0], [1.0, 42.0, 213.0], [1.0, 175.0, 216.0]], "type": "MultiPoint"}], "type": "GeometryCollection"}, "properties": {}, "type": "Feature"}], "type": "FeatureCollection"}
+          const features = response.data.roi
 
-          // {'type': 'GeometryCollection', 'geometries': [{'type': 'MultiPoint', 'coordinates': ((1.0, 73.0, 22.0), (1.0, 134.0, 53.0), (1.0, 179.0, 71.0), (1.0, 413.0, 133.0), (1.0, 251.0, 135.0), (1.0, 557.0, 138.0), (1.0, 492.0, 142.0), (1.0, 140.0, 147.0), (1.0, 50.0, 162.0), (1.0, 38.0, 168.0), (1.0, 190.0, 172.0), (1.0, 144.0, 190.0), (1.0, 77.0, 199.0), (1.0, 42.0, 213.0), (1.0, 175.0, 216.0))}]};
+          // const features = {"features": [{"geometry": {"geometries": [{"coordinates": [[72.0, 2.0], [52.0, 3.0], [32.0, 13.0], [73.0, 22.0], [66.0, 33.0], [77.0, 36.0], [99.0, 39.0], [151.0, 47.0], [179.0, 71.0], [43.0, 96.0], [197.0, 108.0], [413.0, 133.0], [251.0, 135.0], [557.0, 138.0], [492.0, 142.0], [114.0, 143.0], [140.0, 147.0], [50.0, 162.0], [42.0, 165.0], [38.0, 168.0], [184.0, 169.0], [190.0, 172.0], [142.0, 186.0], [144.0, 190.0], [82.0, 197.0], [77.0, 199.0], [39.0, 208.0], [177.0, 209.0], [42.0, 213.0], [175.0, 216.0]], "type": "MultiPoint"}], "type": "GeometryCollection"}, "properties": {}, "type": "Feature"}], "type": "FeatureCollection"}
 
-          vector_layer.getLayerAPI().set_features(feature);
-
-          console.log("roi = ", vector_layer.getLayerAPI().get_features());
-          console.log("roi returned = ", response.data.roi)
-
-
-
+          console.log("roi returned = ", features)
+          if (features)
+          {
+            vector_layer.getLayerAPI().set_features(features);
+          }
+          // console.log("roi = ", vector_layer.getLayerAPI().get_features());
         })
         .catch(error => {
             // console.error('---------', error.response.data);
@@ -276,7 +275,6 @@ export default {
               this.para = null
               this.axios_img(key, JSON.stringify(this.para))
             }
-            console.log("para222 ---- = ", JSON.stringify(this.para))
           }
           )
         .catch(function (error) { // 请求失败处理
@@ -285,7 +283,6 @@ export default {
     },
     onSubmit() {
       console.log('submit!');
-      console.log('999999 = ', this.para)
       this.axios_img(this.currentKey, JSON.stringify(this.para))
       this.dialogVisible = false
     },
