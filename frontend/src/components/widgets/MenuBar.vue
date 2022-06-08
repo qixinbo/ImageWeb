@@ -167,6 +167,10 @@ export default {
       const image_layer = layers[imagelayer_id];
 
 
+      const vectorlayer_id = Object.keys(layers).filter(k => layers[k] instanceof VectorLayer).slice(-1)[0];
+
+      const vector_layer = layers[vectorlayer_id];
+
       // ////////////////////   codes for itk-vtk-viewer //////////////
       // const itkImage = ITKHelper.convertVtkToItkImage(layer.getLayerAPI().get_image())
       // console.log("itkImage = ", itkImage)
@@ -188,11 +192,22 @@ export default {
       const dataURL = image_layer.getSource().getUrl()
       const file = dataURLtoFile(dataURL)
 
+
+      const features = vector_layer.getLayerAPI().get_features().features;
+      if (features.length > 1) {
+        alert("ROI区域太多，请只保留一个")
+      }
+      console.log("geometry = ", features)
+
+
+      const geometry = features.length > 0 ? JSON.stringify(features[0].geometry) : null 
+
       // put file into form data
       const data = new FormData()
       data.append('file', file, 'itk-vtk')
       data.append('plugin', key)
       data.append('para', para)
+      data.append('roi', geometry)
 
       // now upload
       const config = {
@@ -232,10 +247,6 @@ export default {
           // console.log("new url", layer.getSource().getUrl())
 
 
-          const vectorlayer_id = Object.keys(layers).filter(k => layers[k] instanceof VectorLayer).slice(-1)[0];
-
-          const vector_layer = layers[vectorlayer_id];
-
           const features = response.data.roi
 
           // const features = {"features": [{"geometry": {"geometries": [{"coordinates": [[72.0, 2.0], [52.0, 3.0], [32.0, 13.0], [73.0, 22.0], [66.0, 33.0], [77.0, 36.0], [99.0, 39.0], [151.0, 47.0], [179.0, 71.0], [43.0, 96.0], [197.0, 108.0], [413.0, 133.0], [251.0, 135.0], [557.0, 138.0], [492.0, 142.0], [114.0, 143.0], [140.0, 147.0], [50.0, 162.0], [42.0, 165.0], [38.0, 168.0], [184.0, 169.0], [190.0, 172.0], [142.0, 186.0], [144.0, 190.0], [82.0, 197.0], [77.0, 199.0], [39.0, 208.0], [177.0, 209.0], [42.0, 213.0], [175.0, 216.0]], "type": "MultiPoint"}], "type": "GeometryCollection"}, "properties": {}, "type": "Feature"}], "type": "FeatureCollection"}
@@ -245,7 +256,6 @@ export default {
           {
             vector_layer.getLayerAPI().set_features(features);
           }
-          // console.log("roi = ", vector_layer.getLayerAPI().get_features());
         })
         .catch(error => {
             // console.error('---------', error.response.data);

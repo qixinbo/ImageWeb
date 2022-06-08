@@ -6,7 +6,8 @@ from pydantic import BaseModel
 
 import imagepy
 from imagepy.app import ImageWeb
-from sciapp.object import Image
+from sciapp.object import Image, ROI
+from sciapp.util.shputil import json2shp, geom2shp
 
 import base64
 import json
@@ -87,27 +88,34 @@ def plugins(id):
 # https://stackoverflow.com/questions/6375942/how-do-you-base-64-encode-a-png-image-for-use-in-a-data-uri-in-a-css-file
 
 
-imgPlus = None
-
 @app.post('/img/')
 async def img(
     file: UploadFile = File(...), 
     plugin: str = Form(...),
-    para: str  = Form(...)
+    para: str = Form(...),
+    roi: str = Form(...) 
     ):
 
+    # read file stream
     contents = await file.read()
     pil_img = PILImage.open(BytesIO(contents))
     img = np.asarray(pil_img)
     print("img after decoding = ", img.shape)
 
-    global imgPlus
+    # read roi
+    old_roi = json.loads(roi)
+    print("old roi = ", old_roi)
 
+    # create Image Object
     imgPlus = Image([img])
     print('img2 = ', imgPlus.img.shape)
+    if old_roi:
+        imgPlus.roi = ROI(json2shp(old_roi))
     imweb.show_img(imgPlus, file.filename)
 
     print('img2 out = ', imgPlus.img.shape)
+
+
 
     exe = imweb.plugin_manager.get(plugin)
     try:
@@ -118,15 +126,19 @@ async def img(
         # processed_img = imgPlus.img
         processed_imgPlus = imweb.get_img()
         processed_img = processed_imgPlus.img
-        roi = processed_imgPlus.roi
+        new_roi = processed_imgPlus.roi
         print("processed_img = ", processed_img.shape)
 
         geom = None
-        if roi:
-            geom = roi.to_json()
+        if new_roi:
+            print("new roi = ", new_roi)
+            geom = new_roi.to_geom()
+            print("geom = ", geom)
+            print("geom2shp = ", geom2shp(new_roi.to_geom()))
 
 
-        # geom = {'type': 'GeometryCollection', 'geometries': [{'type': 'MultiPoint', 'coordinates': ((1.0, 73.0, 22.0), (1.0, 134.0, 53.0), (1.0, 179.0, 71.0), (1.0, 413.0, 133.0), (1.0, 251.0, 135.0), (1.0, 557.0, 138.0), (1.0, 492.0, 142.0), (1.0, 140.0, 147.0), (1.0, 50.0, 162.0), (1.0, 38.0, 168.0), (1.0, 190.0, 172.0), (1.0, 144.0, 190.0), (1.0, 77.0, 199.0), (1.0, 42.0, 213.0), (1.0, 175.0, 216.0))}]}
+        # geom_test = {'type': 'GeometryCollection', 'geometries': [{'type': 'MultiPoint', 'coordinates': ((1.0, 73.0, 22.0), (1.0, 134.0, 53.0), (1.0, 179.0, 71.0), (1.0, 413.0, 133.0), (1.0, 251.0, 135.0), (1.0, 557.0, 138.0), (1.0, 492.0, 142.0), (1.0, 140.0, 147.0), (1.0, 50.0, 162.0), (1.0, 38.0, 168.0), (1.0, 190.0, 172.0), (1.0, 144.0, 190.0), (1.0, 77.0, 199.0), (1.0, 42.0, 213.0), (1.0, 175.0, 216.0))}]}
+
         
         feature = Feature(geometry=geom)
         my_feature = FeatureCollection([feature])
@@ -153,7 +165,7 @@ async def img(
                 'channels': 1 if processed_img.ndim==2 else processed_img.shape[2]
             },
             'encoded_img': 'data:image/png;base64,{}'.format(encoded_img),
-            'roi': roi.to_json() if roi else None
+            'roi': new_roi.to_json() if new_roi else None
         }
 
     # handling error
