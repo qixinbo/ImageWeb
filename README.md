@@ -1,4 +1,6 @@
 # 介绍
+<!-- ImageWeb是一个旨在将桌面端的图像处理软件[ImagePy](https://github.com/Image-Py/imagepy)迁移到web上的项目，使得用户无需配置复杂的环境、仅需一个浏览器即可进行复杂的图像处理操作。
+如下是硬币分割的一个案例录像： -->
 ![mov](docs/imageweb_small.gif)
 # 启动后端
 进入`backend`文件夹：

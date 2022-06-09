@@ -7,7 +7,7 @@ from pydantic import BaseModel
 import imagepy
 from imagepy.app import ImageWeb
 from sciapp.object import Image, ROI
-from sciapp.util.shputil import json2shp, geom2shp
+from sciapp.util.shputil import json2shp, geom2shp, xy_canvas2np
 
 import base64
 import json
@@ -17,7 +17,7 @@ from PIL import Image as PILImage
 from io import BytesIO
 import copy
 
-from geojson import Feature, FeatureCollection
+import geojson
 
 app = FastAPI()
 
@@ -105,34 +105,24 @@ async def img(
 
     # read roi
     old_roi = json.loads(roi)
-    print("old roi = ", old_roi)
+    print("old_roi in json = ", old_roi)
 
     # create Image Object
     imgPlus = Image([img])
-    print('img2 = ', imgPlus.img.shape)
     if old_roi:
-        # coordinates transformation
-        coordinates = old_roi['coordinates'][0]
-        print("coordinates 111 = ", coordinates)
-
-        for i in coordinates:
-            i[0], i[1] = img.shape[0]-i[1], i[0]
-
-        print("coordinates 222 = ", coordinates)
-
-        # end of transformation
+        print("*****************************************************")
+        xy_canvas2np(old_roi, img.shape)
+        # print("successful!!!")
+        # print("old_roi in json 222 = ", old_roi)
+        print("*****************************************************")
 
         imgPlus.roi = ROI(json2shp(old_roi))
+
     imweb.show_img(imgPlus, file.filename)
-
-    print('img2 out = ', imgPlus.img.shape)
-
-
 
     exe = imweb.plugin_manager.get(plugin)
     try:
         para = json.loads(para)
-        print("para === ", para)
         exe().start(imweb, para)
 
         # processed_img = imgPlus.img
@@ -143,21 +133,21 @@ async def img(
 
         geom = None
         if new_roi:
-            print("new roi = ", new_roi)
+            # print("new roi = ", new_roi)
 
             geom = new_roi.to_json()
-            print("geom = ", geom)
             # print("geom2shp = ", geom2shp(new_roi.to_geom()))
-
-            # print("coordinates = ", geom['geometries'][0]['coordinates'])
-
 
         # geom_test = {'type': 'GeometryCollection', 'geometries': [{'type': 'MultiPoint', 'coordinates': ((1.0, 73.0, 22.0), (1.0, 134.0, 53.0), (1.0, 179.0, 71.0), (1.0, 413.0, 133.0), (1.0, 251.0, 135.0), (1.0, 557.0, 138.0), (1.0, 492.0, 142.0), (1.0, 140.0, 147.0), (1.0, 50.0, 162.0), (1.0, 38.0, 168.0), (1.0, 190.0, 172.0), (1.0, 144.0, 190.0), (1.0, 77.0, 199.0), (1.0, 42.0, 213.0), (1.0, 175.0, 216.0))}]}
 
         
-        feature = Feature(geometry=geom)
-        my_feature = FeatureCollection([feature])
-        print("feature = ", my_feature)
+        feature = geojson.Feature(geometry=geom)
+        feature_collection = geojson.FeatureCollection([feature])
+        # print("feature = ", feature_collection)
+
+        feature_collection4canvas = geojson.utils.map_tuples(lambda c: (c[0], img.shape[0]-c[1]), feature_collection)
+        roijson_returned = geojson.dumps(feature_collection4canvas)
+        # print("new_point = ", roijson_returned)
 
         #################### test 1 ########################
 
@@ -180,7 +170,7 @@ async def img(
                 'channels': 1 if processed_img.ndim==2 else processed_img.shape[2]
             },
             'encoded_img': 'data:image/png;base64,{}'.format(encoded_img),
-            'roi': new_roi.to_json() if new_roi else None
+            'roi': roijson_returned if new_roi else None
         }
 
     # handling error

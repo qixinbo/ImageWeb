@@ -12,6 +12,15 @@ def offset(shp, dx, dy):
 	elif isinstance(shp.body, list):
 		for i in shp.body: offset(i, dx, dy)
 
+def xy_canvas2np(obj, img_shape):
+    if obj['type']=='Polygon':
+        for i in obj['coordinates'][0]:
+            # i[0], i[1] = img_shape[0]-i[1], i[0]
+            i[0], i[1] = i[0], img_shape[0]-i[1]
+    if obj['type']=='GeometryCollection':
+        return [xy_canvas2np(i, img_shape) for i in obj['geometries']]
+
+
 def mark2shp(mark):
     style = mark.copy()
     style.pop('body')

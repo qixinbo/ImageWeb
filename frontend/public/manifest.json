@@ -1,6 +1,6 @@
 {
-  "name": "Kaibu",
-  "short_name": "Kaibu",
+  "name": "ImagePy on Web",
+  "short_name": "ImagePy on Web",
   "theme_color": "#7957d5",
   "background_color": "#ffffff",
   "display": "standalone",

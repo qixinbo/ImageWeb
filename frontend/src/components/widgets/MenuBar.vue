@@ -126,7 +126,7 @@ export default {
     return {
       view: [],
       para: null,
-      menu: 'change after clicked',
+      menu: '',
       dialogVisible: false,
       currentKey: null
     }
