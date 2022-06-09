@@ -21,14 +21,19 @@ npm install
 npm run serve
 ```
 
-# 启动主程序
+# 登录页面
+浏览器中输入：
+```html
+http://localhost:8080/
+```
+<!-- # 启动主程序
 进入`app`文件夹：
 ```python
 python -m http:server 7788
-```
-
-# 登录页面
+``` -->
+<!-- # 登录页面
 浏览器中输入：
 ```html
 http://0.0.0.0:7788
 ```
+ -->

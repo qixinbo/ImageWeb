@@ -15,6 +15,7 @@ import numpy as np
 import cv2
 from PIL import Image as PILImage
 from io import BytesIO
+import copy
 
 from geojson import Feature, FeatureCollection
 
@@ -110,6 +111,17 @@ async def img(
     imgPlus = Image([img])
     print('img2 = ', imgPlus.img.shape)
     if old_roi:
+        # coordinates transformation
+        coordinates = old_roi['coordinates'][0]
+        print("coordinates 111 = ", coordinates)
+
+        for i in coordinates:
+            i[0], i[1] = img.shape[0]-i[1], i[0]
+
+        print("coordinates 222 = ", coordinates)
+
+        # end of transformation
+
         imgPlus.roi = ROI(json2shp(old_roi))
     imweb.show_img(imgPlus, file.filename)
 
@@ -132,9 +144,12 @@ async def img(
         geom = None
         if new_roi:
             print("new roi = ", new_roi)
-            geom = new_roi.to_geom()
+
+            geom = new_roi.to_json()
             print("geom = ", geom)
-            print("geom2shp = ", geom2shp(new_roi.to_geom()))
+            # print("geom2shp = ", geom2shp(new_roi.to_geom()))
+
+            # print("coordinates = ", geom['geometries'][0]['coordinates'])
 
 
         # geom_test = {'type': 'GeometryCollection', 'geometries': [{'type': 'MultiPoint', 'coordinates': ((1.0, 73.0, 22.0), (1.0, 134.0, 53.0), (1.0, 179.0, 71.0), (1.0, 413.0, 133.0), (1.0, 251.0, 135.0), (1.0, 557.0, 138.0), (1.0, 492.0, 142.0), (1.0, 140.0, 147.0), (1.0, 50.0, 162.0), (1.0, 38.0, 168.0), (1.0, 190.0, 172.0), (1.0, 144.0, 190.0), (1.0, 77.0, 199.0), (1.0, 42.0, 213.0), (1.0, 175.0, 216.0))}]}
