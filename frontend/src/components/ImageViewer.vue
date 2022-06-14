@@ -24,8 +24,11 @@
               title="提示notification" 
               type="is-info" 
               aria-close-label="Close message">
-          -----使用"Add layer"添加文件-----
-          -----选定某一Layer对其进行操作----
+          --------------------------------------
+          ** 使用"Add layer"添加图像文件 **
+          ** 或试用File菜单的Samples文件 **
+          ** 具体操作时请先选定某一图层 **
+          --------------------------------------
           注意：LAYERS列表中的文件顺序会影响其可见性，建议一直将Vector Layer置顶，才能查看图像ROI
           </b-message>
           <div class="block" v-if="mode === 'full'">
