@@ -142,30 +142,39 @@ export default {
         console.log(error);
       });
 
+
   },
+
+  // updated(){
+  //   this.$nextTick(async function () {
+  //       // 仅在整个视图都被渲染之后才会运行的代码
+  //     const layers = await this.$store.state.layers;
+  //     console.log("layers = .....", layers)
+
+  //     /////////////// 挑选特定的ImageLayer /////////////////
+  //     const imagelayer_id = await Object.keys(layers).filter(k => layers[k] instanceof ImageLayer).slice(-1)[0];
+  //     console.log("imagelayer_id = ", imagelayer_id)
+  //     const image_layer = layers[imagelayer_id];
+  //     console.log("imagelayer_______ = ", image_layer)
+  //     this.$store.commit("setCurrentLayer", image_layer.config);
+  //     /////////////// 结束挑选特定的ImageLayer /////////////////
+  //     })
+  // },
+
   methods: {
 
     axios_img(key, para){
       // // generate file from base64 string
       // const file = dataURLtoFile('data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAAUA    AAAFCAYAAACNbyblAAAAHElEQVQI12P4//8/w38GIAXDIBKE0DHxgljNBAAO9TXL0Y4OHwAAAABJRU5ErkJggg==', 'myfile')
 
-      // 只有图形层时使用
-      // const layer = this.$store.state.layers[this.$store.state.currentLayer.id];
-
       const layers = this.$store.state.layers;
-      console.log("this.$store.state.layers = ", layers)
 
-      const imagelayer_id = Object.keys(layers).filter(k => layers[k] instanceof ImageLayer).slice(-1)[0];
+      const image_layer = this.$store.state.layers[this.$store.state.currentLayer.id];
 
-      if (imagelayer_id.length > 1)
+      if (!(image_layer instanceof ImageLayer))
       {
-        // alert("当前不支持多个Image Layers，请删掉其他Image Layers，仅保留一个。\n-------------多个Layers的功能正在开发中-------------")
+        alert("请在左侧LAYERS列表中点击选择特定的Image Layer");
       }
-
-      console.log("imagelayer id = ", imagelayer_id)
-
-      const image_layer = layers[imagelayer_id];
-
 
       const vectorlayer_id = Object.keys(layers).filter(k => layers[k] instanceof VectorLayer).slice(-1)[0];
 
@@ -251,7 +260,7 @@ export default {
 
           // const features = {"features": [{"geometry": {"geometries": [{"coordinates": [[72.0, 2.0], [52.0, 3.0], [32.0, 13.0], [73.0, 22.0], [66.0, 33.0], [77.0, 36.0], [99.0, 39.0], [151.0, 47.0], [179.0, 71.0], [43.0, 96.0], [197.0, 108.0], [413.0, 133.0], [251.0, 135.0], [557.0, 138.0], [492.0, 142.0], [114.0, 143.0], [140.0, 147.0], [50.0, 162.0], [42.0, 165.0], [38.0, 168.0], [184.0, 169.0], [190.0, 172.0], [142.0, 186.0], [144.0, 190.0], [82.0, 197.0], [77.0, 199.0], [39.0, 208.0], [177.0, 209.0], [42.0, 213.0], [175.0, 216.0]], "type": "MultiPoint"}], "type": "GeometryCollection"}, "properties": {}, "type": "Feature"}], "type": "FeatureCollection"}
 
-          console.log("roi returned = ", features)
+          // console.log("roi returned = ", features)
           if (features)
           {
             vector_layer.getLayerAPI().set_features(features);

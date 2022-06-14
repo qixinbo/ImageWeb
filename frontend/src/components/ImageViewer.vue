@@ -20,7 +20,14 @@
         type="is-light"
       >
         <div class="p-1">
-
+          <b-message 
+              title="提示notification" 
+              type="is-info" 
+              aria-close-label="Close message">
+          -----使用"Add layer"添加文件-----
+          -----选定某一Layer对其进行操作----
+          注意：LAYERS列表中的文件顺序会影响其可见性，建议一直将Vector Layer置顶，才能查看图像ROI
+          </b-message>
           <div class="block" v-if="mode === 'full'">
             <div class="field">
               <b-dropdown aria-role="list">
@@ -120,6 +127,8 @@
             </b-tab-item>
           </b-tabs>
           <br v-else />
+
+
           <b-menu
             class="is-custom-mobile"
             @sorted="layerSorted()"

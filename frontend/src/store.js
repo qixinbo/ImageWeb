@@ -65,6 +65,9 @@ export const store = new Vuex.Store({
           console.warn("Layer not ready", state.layer_configs[i]);
         }
       }
+
+      // console.log("******************layers = ", state.layers)
+      // console.log("-----------------currentlayer = ", state.currentLayer)
     },
     initialized(state, layer) {
       state.layers[layer.config.id] = layer;
