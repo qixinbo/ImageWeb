@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+python-multipart
+scikit-image
+shapely
+pandas
+opencv-python-headless
+geojson
+numba
