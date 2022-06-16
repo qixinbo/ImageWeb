@@ -38,8 +38,11 @@ http://localhost:8080/
 npm run build
 ```
 该命令会生成`dist`文件夹，里面放置了前端所需的`html`、`css`、`js`文件及图片等静态文件。
+
 **得到该文件夹后，后续就无需再使用`nodejs`及`npm install`这一步。**
+
 对于这些页面，需要启动一个服务器来托管它们。
+
 简单地，可以使用python内置的一个测试服务器来查看效果。可以查看该[教程](https://developer.mozilla.org/zh-CN/docs/Learn/Common_questions/set_up_a_local_testing_server)。
 进入`dist`文件夹，然后：
 ```python
