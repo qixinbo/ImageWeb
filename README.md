@@ -1,6 +1,8 @@
 # 介绍
 ImageWeb是一个旨在将桌面端的图像处理软件[ImagePy](https://github.com/Image-Py/imagepy)迁移到web上的项目（web前端页面由[kaibu](https://github.com/imjoy-team/kaibu)驱动），使得用户无需配置复杂的环境、仅需一个浏览器即可进行复杂的图像处理操作。
+## 试用地址
 试用地址在[这里](https://imagepy-on-web.herokuapp.com/#/)，（该试用app通过[Heroku](https://www.heroku.com/)免费版部署；由于免费版限制为30分钟内无访问则休眠，所以如果菜单未及时加载，请耐心等待约16秒~~此处欢迎服务器资源赞助😃）。
+## 案例
 如下是硬币分割的一个案例录像：
 ![mov](docs/imageweb_small.gif)
 # 启动后端
